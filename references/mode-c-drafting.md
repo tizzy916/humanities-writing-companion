@@ -4,7 +4,7 @@
 
 ## New Content Generation
 
-Not just revising existing text — also helping the author conceive, develop, and write new content. This is the full pipeline from "thinking" to "text."
+Not just revising existing text — also helping the author conceive, develop, and write new content. This is the full pipeline from "thinking" to "text." The stages are reusable checks, not mandatory conversational gates: when the author explicitly requests a draft and supplies enough context, use that material and deliver it directly. Do not require the author to repeat an existing argument or approve each paragraph before continuing.
 
 ### Stage 1: Chapter conception
 
@@ -32,7 +32,7 @@ When the author has a claim but is unsure how to develop it:
 
 The most crucial and most easily AI-damaged stage. Core principle: **what the AI writes is a "draft for discussion," not finished text.**
 
-**Collaborative drafting flow**:
+**Collaborative drafting flow** (teaching default when the author wants speak-first coaching):
 
 1. **Author speaks first**: have the author articulate the core meaning of each paragraph orally (even if rough, like "this paragraph I want to say scholar X talked about A but missed line B")
 2. **AI expands into academic paragraph**: based on the author's oral statement + the style profile, expand into an academic paragraph that matches the author's voice. Must:
@@ -44,8 +44,8 @@ The most crucial and most easily AI-damaged stage. Core principle: **what the AI
 4. **AI does style verification**: after revision, check consistency with full-paper style
 
 **If the author does not want to speak first and wants AI to draft directly**:
-- AI can draft based on conception note and outline, but must:
-  - Open each paragraph with a comment saying "this paragraph's argumentative goal is..."
+- Draft from the available brief, notes, or outline; do not require every setup artifact first. The draft must:
+  - Label the output `[AI DRAFT — author to review]`; put argumentative goals in accompanying notes rather than interrupting every paragraph
   - Use `>>>` to mark places where AI is uncertain (concept understanding, argumentative direction, citation choice)
   - After drafting, proactively prompt: "This is my draft from the outline — look at where the thinking diverges from yours?"
 - Principle: the more text AI drafts, the heavier the author's review burden. AI must not quietly replace the author's thinking.
@@ -67,12 +67,12 @@ New content must be folded into the existing paper structure:
 
 ### Special scenario: starting a paper from scratch
 
-When a user comes with an initial idea rather than an existing draft, run the pre-writing modes in sequence — this scenario is an orchestration of Modes H→I→J→C, not a separate pipeline:
+When a user comes with an initial idea rather than an existing draft, Modes H→I→J→C provide a suggested path. Skip stages already satisfied by the supplied material and honor a direct drafting request:
 
-1. **Initialize the project first**: folder structure per project-management.md, style profile from 1–2 existing samples — the modes below write their outputs into it
+1. **Use the existing project or initialize as needed**: follow project-management.md when persistent files are requested; otherwise deliver inline. Use available style samples and label missing voice evidence rather than blocking a draft
 2. **Mode H**: sharpen the vague interest into a research question (`research-question.md`)
 3. **Mode I**: map what the author has actually read (`literature-map.md`). If the author hasn't read enough yet, Mode I says so — the reading is the author's own work; suggest directional themes only, never specific titles from memory
-4. **Mode J**: plan the structure (`outline.md`) — Socratic: the author discovers the structure; the AI does not hand one over
+4. **Mode J**: plan the structure (`outline.md`) — use Socratic coaching when wanted, or directly propose an outline grounded in the supplied argument when requested
 5. **Mode C, chapter by chapter**: each chapter through the full "conceive → develop → draft → integrate" flow, entering at Stage 3 where the outline already settles Stages 1–2
 
 ### Special scenario: writing a reflexive chapter

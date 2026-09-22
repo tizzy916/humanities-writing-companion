@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: "If you use this skill in your research or writing, please cite it as below."
 type: software
 title: "Humanities Writing Companion: An Agent Skill for Voice-Preserving Humanities Academic Writing"
-version: 5.0.2
-date-released: 2026-07-13
+version: 5.1.0
+date-released: 2026-09-22
 authors:
   - family-names: Shen
     given-names: Cong
@@ -20,9 +20,10 @@ abstract: >
   (Mode I), plan-only outlining (Mode J), conception and drafting (Mode C),
   paragraph dialogue (Mode A), chapter review (Mode B four-layer critique),
   devil's advocate with 1-5 calibration and methodology-focus sub-mode
-  (Mode D), writing-bottleneck assistance (Mode E), draft revision with
-  revision-coach sub-mode (Mode F), blind reading (Mode G), AI-use
-  disclosure for humanities journals (Mode K), and defense/external-review
+  (Mode D, with evidence-based concessions), writing-bottleneck assistance
+  (Mode E), draft revision with
+  revision-coach sub-mode (Mode F), context-aware promise-delivery checking
+  (Mode G), factual AI-use disclosure with target-policy checks (Mode K), and defense/external-review
   comment integration via a revision-dossier workflow (Mode L). Deep-voice
   preservation ("my hand writes my voice"), discipline-specific critique
   routing on a three-layer architecture (6 L1 main disciplines with
@@ -30,9 +31,11 @@ abstract: >
   adjacent fields), ADHD-friendly interaction design, multi-agent parallel
   review fan-out in agent-capable environments, and engineering-grade
   infrastructure (version control, systematic validation, and a five-script
-  zero-dependency toolchain: AI-trace scanning, pending-marker aggregation,
-  citation-consistency checking, citation format conversion, and Crossref
-  citation verification). Bilingual: SKILL.md, README, and references in
+  toolchain requiring zsh and Python 3, with no third-party Python packages:
+  stylistic clue scanning, pending-marker aggregation, citation-consistency
+  checking, citation format conversion, and Crossref/OpenAlex metadata
+  candidate lookup, not source-text or claim verification). Bilingual:
+  SKILL.md, README, and references in
   English and Chinese.
 keywords:
   - agent-skill

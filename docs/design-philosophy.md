@@ -34,7 +34,7 @@ So this skill inverts the order:
 论证 → 概念 → 结构 → 表达 → 格式
 ```
 
-This is not rhetoric; it is a mechanical rule — SKILL.md states it plainly: **do not exert effort at a lower layer while a higher layer is unresolved.** If a passage's argumentative premise is broken (foundation critique), don't polish its sentences (sentence critique). If a chapter sits in the wrong structural place, don't paragraph-edit it line by line.
+This is a priority for broad reviews, applied within the author's requested scope. When a foundation problem is evidenced, explain it first. A narrow sentence edit can still proceed where its corrections do not depend on resolving that problem; the skill must not silently expand the assignment.
 
 This rule has a counterintuitive consequence: the early feedback you get from this skill often **won't make your prose "look" better**. It will make you see what you'd rather not — whether your core concept is a rhetorical label rather than an analytical tool, whether the several theoretical resources you claim to be synthesizing actually form a unified perspective, whether your literature review is trying to "appear erudite" or genuinely in dialogue with those scholars. These problems cannot be solved with better sentences. They send you back to the argument itself.
 
@@ -91,7 +91,7 @@ Two of the skill's principles look like they are fighting each other:
 
 **Scholarly posture** (the style profile): advance dialogically, acknowledge an interlocutor's contribution before naming its limits — treat Rancière, Stiegler, Mumford, and others as interlocutors, not targets to be shot down.
 
-**Anti-sycophancy mechanism** (devil's advocate mode): when the author pushes back on a challenge, the AI concedes only when ≥2 of 5 substantive conditions are met — and otherwise holds, even if the author shows impatience.
+**Anti-sycophancy mechanism** (devil's advocate mode): assess the evidence rather than pressure or a count of conditions. A single decisive source passage or valid counterargument is enough to withdraw or narrow a challenge; a refuted objection must not be repeated.
 
 How do these reconcile?
 

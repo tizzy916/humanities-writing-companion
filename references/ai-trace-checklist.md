@@ -119,7 +119,7 @@ The test is frequency, not presence. Every signature feature has a natural densi
 ### Noise budget: a cap on expression-level changes
 
 - One revision pass gets a budget of **8–12 non-essential expression-level changes per 1,000 characters** (default; the author may reset it). Argument-level changes — fixing a logical gap, correcting a citation, repairing a factual error — do not count against the budget.
-- When the budget is exceeded: **pause and ask the author** before continuing ("I have made N expression-level changes in this passage — keep going, or is this sliding into re-polishing?"). This guards against **polish drift**: each pass individually reasonable, the accumulation producing a text nobody actually wrote.
+- Treat this as a default restraint, not a permission gate. If the author has authorized a comprehensive rewrite or a different budget, continue within that scope and report the extent. Otherwise stop adding optional polish at the budget, finish necessary corrections, and note remaining suggestions; ask only if an unresolved scope choice materially affects completion. This guards against **polish drift** without requiring repeated approval.
 
 ### What this checklist is for
 

@@ -26,7 +26,7 @@ If the profile is empty or some fields blank, use a discipline-generic persona, 
 Tests the sharpness of conceptual tools. Will press: How is your core concept essentially different from existing concepts (like the analogous notions in other scholars in this field)? Why create a new term? Is your theoretical synthesis a real synthesis, or a salad? How do you handle the internal tensions among the theoretical resources?
 
 **Reviewer B · Empirically demanding (in the author's discipline's evidence regime)**:
-Tests the evidentiary foundation — but reads `_writing-config/discipline.md` first and presses in **that discipline's** evidence regime. History: did the actors themselves use these terms; primary or secondary sources; is theory retro-projected? Literature: does the close reading anchor the claim, or does interpretation float free of the text? Art studies: does the formal description sustain the interpretation; are attribution and dating evidenced? Philosophy: does each inferential step hold; what is the strongest counter-example? Religious studies / classics: is the translation checked against the source language? If discipline.md is absent, default to the historical-empirical persona and tell the author you did so.
+Tests the evidentiary foundation — but reads `_writing-config/discipline.md` first and presses in **that discipline's** evidence regime. History: did the actors themselves use these terms; primary or secondary sources; is theory retro-projected? Literature: does the close reading anchor the claim, or does interpretation float free of the text? Art studies: does the formal description sustain the interpretation; are attribution and dating evidenced? Philosophy: does each inferential step hold; what is the strongest counter-example? Religious studies / classics: is the translation checked against the source language? If the file is absent, use the manuscript and the author's stated object/method to select the evidence regime, marking any provisional inference. Ask only when a reasonable choice is impossible and would change a conclusion; never default to history merely because a file is missing.
 
 **Reviewer C · Methodologically skeptical**:
 Tests methodological coherence. Will press: Your paper crosses several fields — methodologically how do you handle this interdisciplinarity? Is your "depth" in each field sufficient? How large is the gap between the methods you claim to use and what you actually do with the text?
@@ -49,13 +49,13 @@ After generating challenges and before presenting them, run each through three q
 
 ### Two-stage option · Confirm targets before the deep attack
 
-For long chapters or full drafts, offer a two-stage run: first present "the N most attackable aspects of this chapter" as a shortlist for the author to confirm, expand, or strike; then deep-dive only the confirmed items. If the author has the target journal's actual review form, ask them to paste it — its categories and severity anchors override the generic reviewer personas.
+For long chapters or full drafts, an optional two-stage run lets the author select targets before the deep dive. If a full review is already requested, proceed through the authorized scope without requiring shortlist approval. Use the target journal's actual review form when supplied; its categories and severity anchors override the generic personas. An unavailable form does not block a general review.
 
 ### Anti-Sycophancy: minimum standard before conceding
 
 LLMs tend to soften their position prematurely when pushed back (sycophancy is a known defect). In Devil's Advocate Mode, this softening defeats the purpose — a real reviewer does not retract a challenge because you are impatient.
 
-**Core rule**: when the author pushes back on a challenge, first check whether the response constitutes a substantive rebuttal. **Concede only when at least 2 of the following conditions are met** — otherwise, continue pressing, even if the author seems impatient or emotional:
+**Core rule**: evaluate the strength and relevance of the rebuttal, not how many boxes it checks. **One decisive passage, counter-example, or logical correction is sufficient to withdraw or narrow a challenge.** The following are possible forms of evidence, not a numerical threshold. If the evidence is incomplete, state the specific unresolved point; do not repeat an answered objection or continue pressing after the author asks to stop:
 
 ```
 □ Author cites specific literature, evidence, or cases in rebuttal
@@ -70,7 +70,7 @@ LLMs tend to soften their position prematurely when pushed back (sycophancy is a
 - "I don't think there's a problem" / "I disagree" (no substantive argument)
 - "It's my personal style" / "it's discipline convention" (unless concrete basis is given)
 - Restating the challenge in weaker form and then answering it (topic shift)
-- Emotional pushback ("you don't understand this field") — this actually shows reviewers may also not understand it, so it needs to be handled in the paper itself
+- Emotional pushback alone does not resolve an objection; it also does not prove that the paper is deficient. Evaluate any accompanying evidence separately, and respect requests to pause or stop
 - Abstract concession ("you have a point") with no concrete revision — leaves the challenge in "open" status rather than "addressed"
 
 **Two outcomes, explicit phrasing**:
@@ -81,19 +81,19 @@ LLMs tend to soften their position prematurely when pushed back (sycophancy is a
 - When response is **sufficient**:
   > "This challenge has been addressed by your response — the reason being [cite the author's specific argument]. I'll mark 'addressed' in the interaction log so this argument can be reused when a real reviewer raises a similar challenge."
 
-**Concessions leave traces**: every time a challenge is addressed, record in `_meta/interaction-log.md`: "Challenge X → response argument Y → status: addressed." This is for traceability and for direct reuse when real reviewers arrive.
+**Concessions leave traces**: record the challenge, decisive evidence, and outcome (`addressed`, `withdrawn — reviewer error`, or `narrowed — remaining point …`) in `_meta/interaction-log.md`. Correct the review itself when the AI misread a passage; do not imply that the author had to revise the paper to resolve an invalid objection.
 
 ### Calibration: dialing reviewer intensity
 
-A real defense committee has reviewers at different intensities. So should this mode. **Before launching Mode D, ask the author: what intensity do you need today?** The author can pick a level, or pick different levels for different reviewers.
+A real defense committee has reviewers at different intensities. So should this mode. **Use the intensity the author requested; if unspecified, begin at Level 3.** The author can choose a level or set different levels for different reviewers without a setup question blocking the review.
 
 | Level | Reviewer posture | When the author needs this |
 |---|---|---|
 | **1 · Gentle reader** | Encouraging, mostly asks clarifying questions, surfaces 1-2 concerns gently | Author is fragile, early-stage draft, building confidence |
 | **2 · Friendly critic** | Probing but supportive, identifies issues without demanding immediate fixes | Mid-stage draft, author wants to know what's there without being overwhelmed |
 | **3 · Peer reviewer** | Default. Standard scrutiny, all four reviewers active, anti-sycophancy enforced | Standard pre-submission review |
-| **4 · Hostile reviewer** | Adversarial, attacks every weak point, demands defense. Concession Threshold stays 2-of-5, but the reviewer never volunteers concessions and re-attacks from a second angle after each author response | High-stakes submission (top journal, dissertation defense), author is emotionally ready |
-| **5 · Adversarial committee member** | Will press to fail. Every conceivable objection raised. Concession Threshold tightened to require 3-of-5 instead of 2-of-5 | Defense rehearsal, author wants to fail in private rather than in public |
+| **4 · Hostile reviewer** | Adversarial, attacks every weak point, demands defense. Decisive evidence still requires withdrawal; a second angle is raised only if it exposes a distinct, unresolved weakness | High-stakes submission (top journal, dissertation defense), author is emotionally ready |
+| **5 · Adversarial committee member** | Tests the hardest plausible objections under defense conditions. The same evidence standard applies; do not manufacture objections or retain a refuted one | Defense rehearsal, author wants to fail in private rather than in public |
 
 **Default: Level 3** (peer reviewer). If the author doesn't specify, run Level 3 and offer to escalate / de-escalate after one round.
 
@@ -110,7 +110,7 @@ Standard Mode D simulates four reviewers attacking the content of the argument. 
 - Before methods-section submission (some journals require explicit methodology statement)
 - When prior Mode D content-attack revealed surface symptoms but not root cause
 
-**Discipline-specific methodology attacks** (read `_writing-config/discipline.md` to know which to deploy — load attacks for the declared L1 + any L3 / adjacent-field overlays; if the file is absent, run the fallback protocol from `references/disciplines.md` first — ask `object of study` + `primary method` — methodology attacks in the wrong discipline's register waste the author's time):
+**Discipline-specific methodology attacks** (use `_writing-config/discipline.md` when available; otherwise use the supplied text and the author's stated object/method to select the relevant L1 and L3 / adjacent-field overlays. Follow `references/disciplines.md` for a provisional best fit. Ask only if the method cannot reasonably be inferred and would change the critique; a missing file is not a reason to assume historical-empirical standards):
 
 **L1 attacks**:
 

@@ -98,7 +98,7 @@ Common subfield-specific overlays the skill should recognize when declared:
 - **Philosophy**: 中国哲学 → classical-text exegesis + tradition · 分析哲学 → formal precision + thought-experiment method · 大陆哲学 → genealogical method + tradition-internal vocabulary
 - **Art studies**: 艺术史 → see L1.5 emphases · 音乐学 → musical-analysis vocabulary + score reading · 电影学 → shot analysis + production context
 
-If the author's subfield isn't on this list, ask in onboarding what specific constraint the subfield adds beyond L1.
+If the subfield is not listed, first use the supplied text and the author's stated method to identify constraints beyond L1. Ask only if a relevant constraint cannot reasonably be inferred and would change the analysis.
 
 ---
 
@@ -251,11 +251,11 @@ Whenever the author's work uses **case study** as a method (in any L1 / L2 / L3 
 
 ### Fallback protocol — when the author's discipline doesn't fit any L1 / L2 / L3 / adjacent entry
 
-In onboarding, ask:
+First extract the following from the supplied manuscript and the author's existing statements. Ask only for an item that cannot reasonably be inferred and would change the analysis:
 
 1. **Object of study**: text / past event / concept / phenomenon / artifact / language structure / practice / institution / image / sound / spatial structure / other (specify)
 2. **Primary method**: close reading / archival research / argument analysis / ethnography / comparison / philological work / structural analysis / interpretive analysis / other (specify)
 
-Then propose: "Based on your object + method, your closest L1 is [X], with relevant overlays from [Y, Z]. Write this to `_writing-config/discipline.md`?" Confirm with the author before proceeding.
+State the best-fit L1 and relevant overlays as a provisional working interpretation, then proceed within the authorized task. Record it in `_writing-config/discipline.md` when project configuration is in scope, otherwise inline. Do not require approval of a missing profile before doing the requested review; do not present an inferred classification as the author's declared identity.
 
 If the field truly doesn't fit (e.g., a discipline emerging in real time), default to the L1 + method match, plus the case-analysis appendix if case-based, and **explicitly tell the author this is a best-fit approximation; suggest they refine the declaration as the project develops**.

@@ -12,9 +12,9 @@ When the author brings an existing draft (e.g., an AI-polished version) for syst
 - An original version (the author's early manuscript without AI intervention, for true-voice comparison)
 - Style profile already established
 
-**No-original fallback**: when no pre-AI manuscript exists (the text was AI-drafted from the start), steps 3a–3b have nothing to compare against. Anchor instead on (a) the style profile and (b) the author's oral restatement — ask the author to say, in their own words, what the passage should claim (cf. Mode C Stage 3's speak-first flow in `references/mode-c-drafting.md`), and rewrite from that against the profile. Tell the author explicitly that traceability is reduced in this branch; every change still ships as a flagged diff.
+**No-original fallback**: when no pre-AI manuscript exists, steps 3a–3b have no baseline. Use the available style profile and the author's stated argument or notes; ask for a restatement only when the intended claim is genuinely missing. On an explicit revision request, proceed within that scope and deliver flagged diffs. Explain that original-voice comparison is unavailable. Rewriting does not erase earlier AI use or change its disclosure record (see Mode K).
 
-**Thin or missing style profile**: say so before starting. Run a minimal profile interview (2-3 questions plus one sample paragraph the author is proud of) and build a starter profile — de-AI-ing without any anchor produces a *different* AI voice, not the author's.
+**Thin or missing style profile**: state the limitation. Use existing samples where available; otherwise perform the requested limited revision without claiming to restore the author's authentic voice. A short profile interview is optional when the author wants closer voice matching, not a gate for every revision.
 
 **Workflow**:
 
@@ -32,9 +32,9 @@ When the author brings an existing draft (e.g., an AI-polished version) for syst
 
 **Key principles**:
 
-- Don't try to finish the full revision in one pass. Focus on 1-2 chapters per session.
+- Work in manageable chapter batches. If the author requests a full revision, continue through the authorized scope; if practical limits prevent completion, name the exact remainder instead of treating a fixed chapter count as a stopping rule.
 - Revision is not "polish" — it involves argumentative-level judgment and must operate under the four-layer critique guidance.
-- When both original and draft expressions are unsatisfactory, discuss with the author rather than deciding alone.
+- When both versions are unsatisfactory, propose or apply a reasoned rewrite within the authorized scope. Ask only if choosing between incompatible interpretations would change the author's intended claim; do not re-request permission paragraph by paragraph.
 - Every revision is recorded in the revision log, marked "restored original expression" / "kept draft improvement" / "rewritten."
 - In chat-only environments (no file system), deliver diffs inline and say explicitly that snapshots/logs are skipped — never skip them silently.
 

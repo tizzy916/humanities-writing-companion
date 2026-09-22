@@ -215,6 +215,13 @@ assert_contains "$out" "1-2 minutes" "--help documents expected runtime"
 assert_contains "$out" "Exit codes" "--help documents the exit-code contract"
 echo ""
 
+# ---------------------------------------------------------------- deterministic bug regressions
+echo "## marker and citation regression tests (offline)"
+python3 "$SCRIPT_DIR/test_regressions.py"
+rc=$?
+assert_exit 0 $rc "bilingual markers, citation verdicts, API shapes, and page styles"
+echo ""
+
 # ---------------------------------------------------------------- citation-verify.py (network)
 echo "## citation-verify.py (live network)"
 

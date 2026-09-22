@@ -8,7 +8,7 @@ Style is not just sentence patterns and word preferences. For academic writing, 
 
 ### Surface features (see style profile)
 
-The style profile (`_writing-config/style-profile.md`) records the author's specific linguistic features. Must be read before every writing assistance. Typical features to watch:
+The style profile (`_writing-config/style-profile.md`) records the author's specific linguistic features. Read it when relevant and available; otherwise use supplied samples provisionally and state the limited basis. Typical features to watch:
 
 - **Sentence patterns**: what kinds of sentence structures does the author prefer? (Comma-flow long sentences, em-dash insertion, question-driven, etc.)
 - **Person habits**: does the author habitually use "I" or "this paper"? — This is the soul of voice; never substitute without authorization

@@ -166,7 +166,7 @@ The plan in a dossier is **a plan, not a contract**. The author may change direc
 
 - Deviations must be **explicitly recorded** in the dossier and the revision log ("explicit deviation from original dossier design: reason …")
 - Update the verification criteria after deviating — judge completion by the new direction, not the old plan
-- The AI must not resist the author's redirection on the grounds that "the dossier says X"; but it should confirm once: "Is this a change of direction, or a temporary compromise?"
+- Follow the author's explicit redirection and record it; the old dossier does not override a new instruction. Ask only when the new direction is ambiguous or conflicts with another current requirement, not merely to reconfirm an authorized change.
 
 ## 11. Interplay with other modes
 

@@ -30,37 +30,5 @@ jobs:
       - name: Run script tests (network tests skipped)
         run: SKIP_NETWORK=1 zsh scripts/tests/run_tests.sh
 
-      - name: SKILL.md frontmatter description length (must be ≤1024 chars)
-        run: |
-          python3 -c "import re,itertools; fm=re.match(r'^---\n(.*?)\n---\n', open('SKILL.md').read(), re.S).group(1).split('\n'); i=next(n for n,l in enumerate(fm) if l.startswith('description:')); head=fm[i].split(':',1)[1].strip().lstrip('>|-').strip(); rest=[l.strip() for l in itertools.takewhile(lambda l: l.startswith(' ') or l=='', fm[i+1:])]; d=' '.join(x for x in [head]+rest if x); print(f'description length: {len(d)}'); raise SystemExit(0 if len(d)<=1024 else f'description too long: {len(d)} > 1024')"
-
-      - name: Bilingual mirror structure check (heading counts must match)
-        run: |
-          set -e
-          check_pair() {
-            a=$(grep -c '^#' "$1")
-            b=$(grep -c '^#' "$2")
-            if [ "$a" != "$b" ]; then
-              echo "MISMATCH: $1 has $a headings, $2 has $b — bilingual mirrors must stay in sync"
-              exit 1
-            fi
-            echo "OK: $1 = $2 = $a headings"
-          }
-          check_pair SKILL.md SKILL.zh.md
-          check_pair README.md README.zh.md
-          check_pair references/ai-trace-checklist.md references/ai-trace-checklist.zh.md
-          check_pair references/project-management.md references/project-management.zh.md
-          check_pair references/revision-workflow.md references/revision-workflow.zh.md
-          check_pair references/target-reader-profile-template.md references/target-reader-profile-template.zh.md
-          check_pair references/style-profile-template.md references/style-profile-template.zh.md
-          check_pair docs/release-checklist.md docs/release-checklist.zh.md
-          check_pair references/disciplines.md references/disciplines.zh.md
-          check_pair references/multilingual-writing.md references/multilingual-writing.zh.md
-          check_pair references/mode-c-drafting.md references/mode-c-drafting.zh.md
-          check_pair references/mode-d-adversarial.md references/mode-d-adversarial.zh.md
-          check_pair references/mode-e-bottleneck.md references/mode-e-bottleneck.zh.md
-          check_pair references/mode-f-revision.md references/mode-f-revision.zh.md
-          check_pair references/modes-prewriting.md references/modes-prewriting.zh.md
-          check_pair references/modes-submission.md references/modes-submission.zh.md
-          check_pair references/deep-style.md references/deep-style.zh.md
-          check_pair scripts/README.md scripts/README.zh.md
+      - name: Bilingual metadata, resource links, and mirror structure
+        run: python3 .github/check_skill.py

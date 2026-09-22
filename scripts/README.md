@@ -54,11 +54,13 @@
 **Markers scanned**:
 | Marker | Meaning | Handling priority |
 |------|------|-----------|
-| `[待核对]` | AI cited from memory / unverified fact | 🔴 Must be cleared to zero before submission |
-| `❓ 待讨论` | An argumentative choice the author must decide | 🟡 Handle as the work advances |
-| `[AI 草稿，待作者审阅]` | An AI-drafted paragraph not yet reviewed | 🟢 Remove the marker after review |
+| `[VERIFY]` / `[待核对]` | AI cited from memory / unverified fact | 🔴 Must be cleared to zero before submission |
+| `❓ to discuss` / `❓ 待讨论` | An argumentative choice the author must decide | 🟡 Handle as the work advances |
+| `[AI DRAFT]` / `[AI 草稿，待作者审阅]` | An AI-drafted paragraph not yet reviewed | 🟢 Remove the marker after review |
 | `>>>` | A spot the AI was unsure about while drafting | 🔵 Handle immediately after drafting |
-| `[作者微调]` | The author's second-pass tweak to an AI suggestion | 🟣 Write back into the writing-style profile |
+| `[author micro-adjustment]` / `[作者微调]` | The author's second-pass tweak to an AI suggestion | 🟣 Write back into the writing-style profile |
+
+The draft aliases `[AI draft, pending author review]` and `[AI 草稿]` are also recognized. The summary counts matching lines within each marker category; repeated markers of the same category on one line count once. Directory scans include `.md` files only.
 
 **When to run**:
 - At the start of every conversation (to see what remains unfinished)
@@ -82,6 +84,8 @@ python3 scripts/citation-consistency.py path/to/paper/main.md
 3. Inconsistent multi-author connectors (`&` / `and` / `与` / `和` / `、`)
 4. Inconsistent name forms when the same source is cited (Chinese translated name vs. original surname)
 5. Inconsistent page-number formats (`p. X` / `第 X 页`, etc.)
+
+Single pages and page ranges within one style (`p. 2` / `pp. 3–4`, or `第 2 页` / `第 3–4 页`) are treated as consistent. Differences in spacing or language remain review items.
 
 **When to run**:
 - A local consistency check after finishing a chapter
@@ -138,9 +142,11 @@ python3 scripts/citation-format-convert.py refs.bib --to mla --sort year
 
 ---
 
-### 5. `citation-verify.py` · Citation-authenticity check (new in v4.0)
+### 5. `citation-verify.py` · Citation candidate lookup (new in v4.0)
 
-**Purpose**: Scans every inline citation in a Markdown draft and checks each one for existence against the public Crossref API, **cascading to OpenAlex** (free, no key needed) when Crossref has no match — OpenAlex covers many monographs and older humanities works that Crossref misses. **Primarily for catching LLM citation hallucinations** (fake journal-article citations the AI fabricates from "memory").
+**Purpose**: Extracts supported author-year citations from a Markdown draft and retrieves candidate metadata from Crossref, **cascading to OpenAlex** when Crossref has no candidate. The returned candidates help an author investigate citations that may have been invented or misremembered. This is a heuristic search, not proof of citation authenticity or exhaustive coverage of the draft.
+
+**Network disclosure**: Running the script sends the extracted author names and years to the third-party Crossref and OpenAlex services; it does not upload the full draft. Confirm external metadata queries are within the task's authorized scope. For local-only work, use the other four scripts and leave source verification pending.
 
 **Usage**:
 ```bash
@@ -154,10 +160,10 @@ python3 scripts/citation-verify.py path/to/draft.md --quiet --json
 **Runtime**: requests are rate-limited to 1/sec per API, so a draft with 50 citations takes roughly **1–2 minutes** (longer when the OpenAlex cascade kicks in). Budget accordingly.
 
 **Results fall into four categories**:
-- **✓ FOUND**: a publication by that surname exists in that year, with the title and container shown in the output — **this only proves surname + year + that title exist**. It does *not* prove the citation is correct: common surnames like (Smith, 2010) will match unrelated works. **Always eyeball the reported title/container against what you actually cited.**
-- **⚠ FUZZY_MATCH**: a near but imperfect name match (0.5–0.85) — could be a misspelling, a wrong year, or a different author of the same name; needs review
+- **✓ FOUND**: a candidate's surname metadata matches within the API's year filter, with its title and container shown in the output. **This does not establish work identity, edition, quotation accuracy, or claim support.** Common surnames like (Smith, 2010) can match unrelated works. **Always compare the returned metadata with the work actually cited.**
+- **⚠ FUZZY_MATCH**: a near but imperfect name match (similarity ≥0.5 and <1.0) — could be a misspelling or a different author; needs review. Only an exact surname match after case/outer-whitespace normalization can receive FOUND; similarity is not a calibrated confidence score
 - **✗ NOT_FOUND**: no match in Crossref **or** OpenAlex — **be alert**, but **not necessarily a hallucination** (see boundaries below)
-- **⚡ ERROR**: the lookup itself failed (network timeout, API outage) — this is a **lookup failure, not evidence the work is fake**. Never delete a citation because of an ERROR verdict; re-run later or check manually. (Errors are reported distinctly and never silently counted as NOT_FOUND.)
+- **⚡ ERROR**: the lookup itself failed (network timeout, API outage, malformed response) and no backend returned a candidate — this is a **lookup failure, not evidence the work is fake**. Never delete a citation because of an ERROR verdict; re-run later or check manually. (Errors are reported distinctly and never silently counted as NOT_FOUND.)
 
 **Exit codes** (for CI / agent gating):
 | Code | Meaning |
@@ -166,13 +172,15 @@ python3 scripts/citation-verify.py path/to/draft.md --quiet --json
 | `1` | at least one FUZZY_MATCH or NOT_FOUND — review needed |
 | `2` | at least one ERROR (network/parse failure), or unreadable input file |
 
+For compatibility, zero parsed citations still returns `0`; **this is not a verification pass**. The parser does not cover every footnote, numeric, grouped, or multilingual citation form. Read the parsed count before interpreting the exit code.
+
 **When to run**:
 - After Mode B (chapter-level review), before Mode G (blind-reading check)
 - Any chapter the AI drafted (after Mode C output)
 - The final compliance check before submission
 
 **Important boundaries**:
-- **FOUND ≠ verified.** The output always carries the matched title + container so *you* can judge whether it is the work you cited — that judgment stays with the author
+- **FOUND ≠ verified.** Compare the returned title and container (when available) with the cited work; verify the edition, quoted text, and claim support against the source itself
 - **Crossref and OpenAlex together still do not index everything.** Many humanities works (especially: monographs from small university presses, untranslated foreign-language books, dissertations, archival sources, classical texts) are **absent from both** — for these, "NOT_FOUND" is the expected result and does **not** indicate a problem
 - What this script is good at is catching **hallucinated LLM journal-article citations** — the area index coverage is best
 - For monograph, archival, and classics citations, the right tool is the `[VERIFY]` / `[待核对]` marker protocol (see SKILL.md), not this script
@@ -195,6 +203,8 @@ The Python scripts need no special installation — they depend only on the Pyth
 ## Tests
 
 `scripts/tests/run_tests.sh` (zsh) is a minimal regression suite over all five scripts, with fixtures under `scripts/tests/fixtures/` (mixed Chinese/English citations, a directory with planted AI clichés, nested-brace BibTeX, pending markers). It asserts hit counts, exit-code contracts, directory-mode scanning, and friendly errors on missing files. CI runs it on every push.
+
+The suite also runs `scripts/tests/test_regressions.py`: deterministic, offline tests for bilingual markers, near-name verdicts, malformed API responses, fallback recovery, and valid singular/plural page forms. No draft text or synthetic test data is sent to an API in the offline run.
 
 ```bash
 zsh scripts/tests/run_tests.sh                 # full run (includes one live network test)

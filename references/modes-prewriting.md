@@ -14,9 +14,11 @@ The earliest-stage mode. Author has an interest, a topic, or a vague sense of wh
 - When stuck between several possible directions
 - When the author has a draft but realizes the question driving it isn't sharp
 
-**Workflow** (typically 5–8 turns of dialogue, do not rush):
+**Workflow** (a teaching default, not a required number of turns):
 
-1. **Locate the field**: which discipline (or which inheritance, e.g., "intellectual history = history + philosophy")? What sub-area within it? **Read `_writing-config/discipline.md`** if it exists; if not, ask inline — 2 questions max (L1 + optional L3), not the full onboarding.
+Use Socratic dialogue when the author wants to develop their own question. When they explicitly request candidate questions or a draft and supply enough context, produce the requested result directly, label tentative claims and evidence gaps, and retain their final scholarly judgment. Reuse answers already supplied; ask only for information that materially blocks the task.
+
+1. **Locate the field**: which discipline (or which inheritance, e.g., "intellectual history = history + philosophy")? What sub-area within it? **Read `_writing-config/discipline.md`** if it exists. Otherwise use the manuscript and the object/method already described by the author; state any provisional inference. Ask only if the discipline cannot reasonably be inferred and the answer would change the analysis, not merely because a file is missing.
 
 2. **Find the puzzle**:
    - What is contested? What do scholars currently disagree about in this area?
@@ -64,11 +66,11 @@ The earliest-stage mode. Author has an interest, a topic, or a vague sense of wh
    ```
 
 **Crucial constraints**:
-- Do not generate the question for the author. Ask, probe, summarize — let the author commit. (The line: summarizing elements the author has already committed to into a candidate sentence is legitimate; inventing elements they haven't said is not.)
-- Do not approve a question until step 4 (so-what test) is passed concretely.
-- If the author proposes a question that's actually a topic (e.g., "I want to write about Foucault and AI"), refuse to proceed until it's narrowed to a specific argumentative claim.
+- Keep the author responsible for the final question. You may propose candidate formulations when requested; distinguish their stated commitments from AI-proposed possibilities.
+- Until the so-what test is answered concretely, label the question provisional rather than validated.
+- If the input is a topic (e.g., "I want to write about Foucault and AI"), help narrow it. When requested, provide a provisional question or exploratory draft with explicit assumptions instead of blocking all progress.
 
-**Stalemate exit**: if the so-what test fails across multiple rounds, the cause is usually under-reading, not bad thinking. Say so plainly, park the question draft with its open items in `research-question.md`, and route to Mode I / further reading — do not keep pressing.
+**Stalemate exit**: if the so-what test remains unresolved, record what is missing without assuming the cause is under-reading. Save the provisional question and open items in `research-question.md`; offer Mode I, targeted reading, or an exploratory draft according to the author's request. Do not keep pressing through repeated rounds.
 
 **Mode-switching hints**:
 - Question sharp enough → switch to **Mode I** (literature mapping: who else has fought over this)
@@ -83,15 +85,15 @@ Organizes what the author has already read into a working map. **Iron rule: this
 
 **When to engage**:
 - Before writing a literature-review section
-- When the author can name 8–15+ references but can't yet articulate how they relate
+- When the author has read several references but cannot yet articulate how they relate
 - When the author needs to position their argument against existing positions
 - After Mode H, when the question is sharp and now needs to be located in a conversation
 
 **Workflow**:
 
-0. **Read `_writing-config/discipline.md`** (ask inline if absent) — the map's shape is discipline-specific: art history may organize by generations, media, or curatorial-theoretical layers rather than camps; primary sources, artist writings, and catalogs sit in a different layer from secondary scholarship.
+0. **Use the declared discipline or infer it from the supplied text and method**; read `_writing-config/discipline.md` when available. Ask only when reasonable inference is impossible and the answer would change the map — its shape is discipline-specific: art history may organize by generations, media, or curatorial-theoretical layers rather than camps; primary sources, artist writings, and catalogs sit in a different layer from secondary scholarship.
 
-1. **Author lists references they've actually read** (minimum 8; 8–15 is the sweet spot). Format flexible: just names + works, or full citations. For bilingual authors, merge the same scholar's names across languages into one entry (巫鸿/Wu Hung is one scholar, not two). **If the list is short (< 8), Mode I refuses to proceed and instead points the author back to reading — directional themes only, never specific titles from memory; Mode I does not compensate for under-reading.**
+1. **Use references the author has actually read**, with available notes or excerpts. There is no minimum count: adequacy depends on the question and scope. An 8–15-work set can be a manageable teaching exercise, not an admission requirement. Format is flexible: names + works or full citations. Merge bilingual names for the same scholar into one entry (巫鸿/Wu Hung). **For a small set, produce a provisional map and state its coverage limits; identify needed reading by topic without inventing titles. With no works or notes at all, offer an empty mapping template and identify the missing input.**
 
 2. **Group by intellectual lineage / school / camp** (this is the central skill). Ask the author:
    - Who would these scholars cite each other approvingly?
@@ -152,13 +154,13 @@ Organizes what the author has already read into a working map. **Iron rule: this
 - Never invent a reference / citation / scholar / work the author hasn't named.
 - Never summarize a work the author hasn't named. (You can ask "have you read Y on this?" — but don't tell the author what Y says.)
 - Gap-probing questions that name a scholar the author hasn't mentioned must carry low-confidence framing ("I may be misremembering — worth checking whether…") — a confidently-asked question can plant a phantom reference as effectively as an assertion.
-- Cold start (no project structure yet): ask where the project root should live, or keep the map inline in chat-only environments — do not create directories in unguessed locations.
+- Cold start (no project structure yet): use an established project path when available. If persistence is requested but no path is known, ask for the location; otherwise deliver the map inline. Do not invent a directory location.
 - The mode helps **organize**, not **discover**.
 
 **Mode-switching hints**:
 - Map complete → **Mode J** (plan the paper against the mapped conversation)
 - Mapping reveals the question isn't sharp → back to **Mode H**
-- List < 8 works → reading first; return to Mode I after
+- Coverage is limited → deliver a provisional map, name the gaps, and suggest targeted reading
 
 ---
 
@@ -181,7 +183,7 @@ Pure outline mode — no draft writing. Extracted from Mode C so the author can 
    - `_writing-config/literature-map.md` if exists (Mode I output)
    - `_writing-config/reader-profile.md` for target audience
 
-   If a file is absent, ask inline — 2 questions max, not full onboarding. If `research-question.md` is absent, run a mini so-what check first: "In one sentence — what does this paper argue, and against whom?" An outline built on a topic instead of a question organizes by coverage, not argument, and step 5's cross-check has nothing to check against.
+   Missing files do not imply missing context: first use the supplied manuscript, notes, and prior author statements to identify discipline, question, literature, and audience. State reasonable provisional inferences. Ask only when a necessary fact cannot reasonably be inferred and would change the outline. If the claim itself remains unclear, mark it provisional and identify that gap; do not rerun onboarding solely because `research-question.md` is absent.
 
 3. **Apply discipline-specific arc**. Each L1 main discipline has a recurring rhetorical structure. L3 cross-disciplinary fields and adjacent fields combine multiple L1 arcs with their own overlays. Use these as starting templates (the author can deviate, but the deviation should be a choice not an oversight):
 
@@ -246,7 +248,7 @@ Pure outline mode — no draft writing. Extracted from Mode C so the author can 
    - Claim 1 (§1) → supports → claim 2 (§3) → supports → main thesis (§5)
    ```
 
-**Hard constraint**: Mode J does NOT write paragraphs. A one-sentence thesis per section belongs in the outline; anything beyond that single sentence is drafting. If the author asks Mode J to "just write the first paragraph too," refuse and offer to switch to Mode C — which, arriving from Mode J with the outline, enters directly at Stage 3. Mode J's value is the planning discipline of not writing.
+**Scope**: Mode J delivers an outline by default, with a one-sentence thesis per section. If the author also asks for paragraphs, that request authorizes a switch to Mode C: briefly name the switch and draft from the existing outline at Stage 3, without a separate permission round. Keep exploratory prose labeled as a draft.
 
 **Restructuring an existing draft**: when the trigger is reorganizing existing text rather than planning new, insert a mapping step before step 4 — extract each existing section's *function* (not topic) into a list, map those functions against the target arc, and mark each keep / move / merge / cut / add. The outline output records this mapping, so the author sees what happens to every existing section.
 

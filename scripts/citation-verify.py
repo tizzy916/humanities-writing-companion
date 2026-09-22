@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-citation-verify.py — 引用真实性核查 / Citation authenticity check (Crossref + OpenAlex)
+citation-verify.py — 引用候选检索 / Citation candidate lookup (Crossref + OpenAlex)
 
-Reads in-prose citations from a Markdown file and verifies each one against the
+Extracts supported author-year citations from a Markdown file and searches the
 Crossref public API, cascading to OpenAlex when Crossref has no match (OpenAlex
 covers many monographs and older humanities works that Crossref misses). Flags:
-    1. CITATIONS THAT DO NOT EXIST in either index (likely hallucination — but see
-       the honest disclaimer below)
+    1. CITATIONS WITH NO CANDIDATE FOUND in either queried index. Index absence
+       is not evidence that the cited work does not exist.
     2. CITATIONS WHERE THE AUTHOR NAME ONLY FUZZY-MATCHES (probable typo or
        different work)
     3. QUERIES THAT FAILED (network/parse error) — reported as ERROR, never
@@ -20,15 +20,16 @@ Runtime: requests are rate-limited to 1/sec per API to be polite, so a draft
 with 50 citations takes roughly 1–2 minutes. Budget accordingly.
 
 Exit codes (for CI / agent gating):
-    0 — every citation FOUND (or no citations parsed)
+    0 — every citation FOUND (or no citations parsed; not a verification pass)
     1 — at least one FUZZY_MATCH or NOT_FOUND (review needed)
     2 — at least one ERROR (network/parse failure), or unreadable input file
 
 诚实声明 / Honest disclaimer:
-    - A "FOUND" verdict only proves that SOME publication by that surname exists
-      in that year, with the title shown in the output. It does NOT prove the
-      citation is correct — common surnames (Smith, 2010) will match unrelated
-      works. Always eyeball the reported title/container against your citation.
+    - "FOUND" means a candidate's surname metadata matched exactly after case
+      and outer-whitespace normalization, within the API's year filter. It does
+      NOT establish work identity, edition, quotation accuracy, or claim support.
+      Common surnames (Smith, 2010) can match unrelated works. Compare the
+      returned title/container with the work actually cited.
     - Crossref and OpenAlex together still do not index everything. Many
       humanities works (monographs from small university presses, untranslated
       foreign-language works, dissertations, archival sources, classical texts)
@@ -37,6 +38,9 @@ Exit codes (for CI / agent gating):
       citations) — that's where index coverage is good.
     - For monograph / archival / classics citations, the [VERIFY] marker
       protocol in SKILL.md is the right tool, not this script.
+    - Running this script sends extracted author names and years to the third-party
+      Crossref and OpenAlex services. It does not upload the full draft. Use local
+      checks instead when external metadata queries are outside the user's scope.
 
 API refs: https://api.crossref.org/works · https://api.openalex.org/works
 """
@@ -55,7 +59,7 @@ from difflib import SequenceMatcher
 
 CROSSREF_URL = "https://api.crossref.org/works"
 OPENALEX_URL = "https://api.openalex.org/works"
-USER_AGENT = "humanities-writing-companion/4.0 (https://github.com/tizzy916/humanities-writing-companion; mailto:shencong916@gmail.com)"
+USER_AGENT = "humanities-writing-companion/5.1.0 (https://github.com/tizzy916/humanities-writing-companion; mailto:shencong916@gmail.com)"
 
 
 class QueryError(Exception):
@@ -121,9 +125,36 @@ def crossref_query(author, year, rows=5):
     url = f"{CROSSREF_URL}?{urllib.parse.urlencode(params)}"
     try:
         data = _fetch_json(url)
-        return data.get("message", {}).get("items", [])
+        if not isinstance(data, dict) or not isinstance(data.get("message"), dict):
+            raise ValueError("unexpected response shape: missing message object")
+        items = data["message"].get("items")
+        _validate_items(items)
+        return items
     except Exception as exc:
         raise QueryError(f"Crossref query failed for ({author}, {year}): {exc}") from exc
+
+
+def _validate_items(items):
+    """Reject malformed backend data rather than treating it as an empty index."""
+    if not isinstance(items, list):
+        raise ValueError("unexpected response shape: expected an items list")
+    for item in items:
+        if not isinstance(item, dict):
+            raise ValueError("unexpected response shape: expected a work object")
+        authors = item.get("author")
+        if authors is None:
+            authors = []
+        if not isinstance(authors, list) or any(
+            not isinstance(author, dict) or not isinstance(author.get("family") or "", str)
+            for author in authors
+        ):
+            raise ValueError("unexpected response shape: invalid author list")
+        for field in ("title", "container-title"):
+            values = item.get(field)
+            if values is None:
+                values = []
+            if not isinstance(values, list) or any(not isinstance(value, str) for value in values):
+                raise ValueError(f"unexpected response shape: invalid {field} list")
 
 
 def openalex_query(author, year, rows=5):
@@ -143,36 +174,35 @@ def openalex_query(author, year, rows=5):
     url = f"{OPENALEX_URL}?{urllib.parse.urlencode(params)}"
     try:
         data = _fetch_json(url)
+        if not isinstance(data, dict) or not isinstance(data.get("results"), list):
+            raise ValueError("unexpected response shape: missing results list")
+        items = []
+        for w in data["results"]:
+            authors = []
+            for auth in w.get("authorships", []):
+                name = (auth.get("author") or {}).get("display_name") or auth.get("raw_author_name") or ""
+                if name:
+                    # Last token as a family-name approximation
+                    authors.append({"family": name.split()[-1]})
+            container = None
+            loc = w.get("primary_location") or {}
+            src = loc.get("source") or {}
+            if src.get("display_name"):
+                container = src["display_name"]
+            doi = w.get("doi")
+            if doi and doi.startswith("https://doi.org/"):
+                doi = doi[len("https://doi.org/"):]
+            items.append({
+                "author": authors,
+                "title": [w.get("display_name") or ""],
+                "container-title": [container] if container else [],
+                "DOI": doi,
+                "type": w.get("type"),
+            })
+        _validate_items(items)
+        return items
     except Exception as exc:
         raise QueryError(f"OpenAlex query failed for ({author}, {year}): {exc}") from exc
-    if "results" not in data:
-        # e.g. HTTP-200 body {"error": "Search temporarily unavailable", ...}
-        msg = data.get("message") or data.get("error") or "unexpected response shape"
-        raise QueryError(f"OpenAlex query failed for ({author}, {year}): {msg}")
-    items = []
-    for w in data.get("results", []):
-        authors = []
-        for auth in w.get("authorships", []):
-            name = (auth.get("author") or {}).get("display_name") or auth.get("raw_author_name") or ""
-            if name:
-                # Last token as a family-name approximation
-                authors.append({"family": name.split()[-1]})
-        container = None
-        loc = w.get("primary_location") or {}
-        src = loc.get("source") or {}
-        if src.get("display_name"):
-            container = src["display_name"]
-        doi = w.get("doi")
-        if doi and doi.startswith("https://doi.org/"):
-            doi = doi[len("https://doi.org/"):]
-        items.append({
-            "author": authors,
-            "title": [w.get("display_name") or ""],
-            "container-title": [container] if container else [],
-            "DOI": doi,
-            "type": w.get("type"),
-        })
-    return items
 
 
 def best_match(items, author):
@@ -182,12 +212,12 @@ def best_match(items, author):
     best = None
     best_score = 0.0
     for item in items:
-        item_authors = item.get("author", [])
+        item_authors = item.get("author") or []
         if not item_authors:
             continue
         for a in item_authors:
-            family = a.get("family", "")
-            score = SequenceMatcher(None, family.lower(), author.lower()).ratio()
+            family = a.get("family") or ""
+            score = SequenceMatcher(None, family.strip().casefold(), author.strip().casefold()).ratio()
             if score > best_score:
                 best_score = score
                 best = item
@@ -252,7 +282,7 @@ def verify(text, verbose=False):
                        f"(monograph, archival, classics, dissertation, foreign-language), "
                        f"or it may not exist. Manually verify.")
             match_data = None
-        elif score < 0.85:
+        elif score < 1.0:
             verdict = "FUZZY_MATCH"
             details = (f"Best match for ({author}, {year}) is similarity={score:.2f} "
                        f"(source: {source}). "
@@ -262,11 +292,12 @@ def verify(text, verbose=False):
             verdict = "FOUND"
             title = (best.get("title") or [""])[0]
             container = (best.get("container-title") or [""])[0] if best.get("container-title") else ""
-            details = (f"A publication by surname '{author}' exists in {year} "
-                       f"(source: {source}, name-match confidence {score:.2f}): "
+            details = (f"Candidate metadata matches surname '{author}' under the {year} year filter "
+                       f"(source: {source}, name similarity {score:.2f}): "
                        f"\"{title}\"" + (f" — {container}" if container else "") + ". "
-                       f"FOUND only proves surname+year+this title exist — "
-                       f"manually confirm this is the work you are citing.")
+                       f"FOUND is only a candidate metadata match — "
+                       f"manually confirm this is the work you are citing; "
+                       f"quotation accuracy and claim support are not checked.")
             match_data = best
         results.append({
             "author": author,
@@ -276,7 +307,7 @@ def verify(text, verbose=False):
             "source": source,
             "errors": errors or None,
             "match": {
-                "title": match_data.get("title", [""])[0] if match_data else None,
+                "title": (match_data.get("title") or [""])[0] if match_data else None,
                 "type": match_data.get("type") if match_data else None,
                 "container": match_data.get("container-title", [""])[0]
                              if match_data and match_data.get("container-title") else None,
@@ -301,7 +332,8 @@ def exit_code(results):
 def print_report(results):
     """Print human-readable report."""
     if not results:
-        print("[i] No citations parsed from the input.")
+        print("[i] No citations parsed from the input. This is not a verification pass; "
+              "check whether the draft uses a supported author-year citation form.")
         return
 
     not_found = [r for r in results if r["verdict"] == "NOT_FOUND"]
@@ -311,7 +343,7 @@ def print_report(results):
 
     print(f"\n=== Citation verification (Crossref → OpenAlex cascade) ===")
     print(f"Total citations parsed: {len(results)}")
-    print(f"  ✓ Found:        {len(found)}  ← surname+year+title exist; confirm same work")
+    print(f"  ✓ Found:        {len(found)}  ← candidate metadata match; confirm same work")
     print(f"  ⚠ Fuzzy match:  {len(fuzzy)}  ← review")
     print(f"  ✗ Not found:    {len(not_found)}  ← review (or may be off-index humanities work)")
     print(f"  ⚡ Error:        {len(errored)}  ← query failed; NOT evidence of hallucination")
@@ -341,7 +373,7 @@ def print_report(results):
             print(f"    {r['details']}")
 
     if found:
-        print(f"\n## ✓ FOUND — a work by this surname+year exists; CONFIRM it is yours ({len(found)})")
+        print(f"\n## ✓ FOUND — candidate metadata match; CONFIRM it is yours ({len(found)})")
         for r in found:
             print(f"\n  ({r['author']}, {r['year']}) → \"{r['match']['title']}\" [{r['match']['source']}]")
             if r["match"]["container"]:
@@ -352,8 +384,8 @@ def print_report(results):
             print(f"      common surnames match unrelated publications.")
 
     print(f"\n=== Reminders ===")
-    print("  · FOUND ≠ verified. It proves a publication by that surname exists that year")
-    print("    with the title shown above. Whether it is YOUR citation is the author's call.")
+    print("  · FOUND ≠ verified. It is a candidate surname match within an API year filter.")
+    print("    Confirm work identity and edition, then check the quotation and claim support.")
     print("  · NOT_FOUND is expected for monographs, archival sources, classics, dissertations,")
     print("    and non-English-language works. Index coverage is strongest for English-")
     print("    language journal articles.")
@@ -367,7 +399,7 @@ def print_report(results):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Verify in-prose citations against Crossref, cascading to OpenAlex.",
+        description="Look up candidate metadata for author-year citations via Crossref and OpenAlex.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
             "Runtime: rate-limited to 1 request/sec per API — a draft with 50 citations\n"
@@ -375,9 +407,12 @@ def main():
             "\n"
             "Exit codes: 0 = all FOUND (or none parsed); 1 = any FUZZY_MATCH/NOT_FOUND;\n"
             "            2 = any ERROR (network/parse failure) or unreadable input.\n"
+            "Zero parsed citations does not mean verification passed.\n"
             "\n"
-            "FOUND only proves surname+year+reported-title exist in the index —\n"
-            "always confirm the reported title is the work you actually cited."
+            "FOUND is a candidate metadata match, not verification of work identity,\n"
+            "quotation accuracy, or support for your claim.\n"
+            "Network disclosure: extracted author names and years are sent to the\n"
+            "third-party Crossref/OpenAlex services; the full draft is not uploaded."
         ),
     )
     parser.add_argument("input", help="Input Markdown file to scan")

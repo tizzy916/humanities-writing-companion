@@ -97,12 +97,12 @@ def scan(text):
         if len(name_lang_conflicts) > 5:
             issues.append(f"  ... 共 {len(name_lang_conflicts)} 个年份有此问题 / {len(name_lang_conflicts)} years have this issue in total")
 
+    # Singular pages and page ranges belong to the same style: p./pp. is a
+    # grammatical distinction, not evidence of inconsistent formatting.
     page_formats = {
-        'p. X':   len(re.findall(r'\bp\.\s+\d', text)),
-        'pp. X-Y': len(re.findall(r'\bpp\.\s+\d', text)),
-        'p.X (无空格 / no space)':  len(re.findall(r'\bp\.\d', text)),
-        '第 X 页': len(re.findall(r'第\s*\d+\s*页', text)),
-        '第 X-Y 页': len(re.findall(r'第\s*\d+\s*[-–]\s*\d+\s*页', text)),
+        'p. / pp. X': len(re.findall(r'\bpp?\.\s+\d', text)),
+        'p./pp.X (无空格 / no space)': len(re.findall(r'\bpp?\.\d', text)),
+        '第 X / X-Y 页': len(re.findall(r'第\s*\d+(?:\s*[-–]\s*\d+)?\s*页', text)),
     }
     used_pages = {k: v for k, v in page_formats.items() if v > 0}
     if len(used_pages) > 1:

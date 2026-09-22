@@ -57,7 +57,7 @@ Not a polishing tool. Not a citation manager. Not a research pipeline. **A think
 | **Pre-submission** | Mode G · Blind reading · Mode K · AI-use disclosure |
 | **Post-review** | Mode L · Revision workflow (defense/external-review comment integration, revision-dossier system) |
 
-Plus a **citation toolchain** (`scripts/`): consistency checking, format conversion (Chicago / MLA / APA / GB7714), and reference verification against Crossref. In agent-capable environments (e.g., Claude Code), Mode B/D reviews can fan out to parallel reviewer agents, and pending claims can be verified with evidence tiers via deep-research-type tools.
+Plus a **citation toolchain** (`scripts/`): consistency checking, format conversion (Chicago / MLA / APA / GB7714), and metadata candidate lookup through Crossref/OpenAlex (not source-text or claim verification). In agent-capable environments (e.g., Claude Code), Mode B/D reviews can fan out to parallel reviewer agents, and pending claims can be checked against sources with provenance, support, and limitations recorded separately.
 
 ---
 
@@ -122,7 +122,7 @@ Layer 3 · Paragraph    "What is this paragraph doing?"
 Layer 4 · Sentence     "Is this sentence right? Well-said?"
 ```
 
-**Strict top-down rule**: do not exert effort at lower layers while upper layers are unresolved.
+**Scope-aware priority**: start with consequential argument issues in a full review; complete a requested local edit when it does not depend on resolving those issues.
 
 ### Devil's advocate with anti-sycophancy
 
@@ -132,7 +132,7 @@ Simulates three reviewers + one well-intentioned reader:
 - Reviewer C · Methodologically skeptical
 - Reader D · Well-intentioned but confused (**distinctive design**: places where a friendly reader gets confused are weak points in the argument)
 
-**Anti-sycophancy hard rule**: when the author pushes back on a challenge, the AI must see at least 2 of 5 substantive conditions met before conceding — prevents premature softening under emotional pressure.
+**Evidence-based correction**: do not concede merely under pressure, but retract a challenge when even one decisive source passage or valid argument defeats it. Reviewer intensity never permits ignoring a correction.
 
 ### Deep voice learning and preservation ("My hand writes my voice")
 
@@ -198,7 +198,7 @@ Borrowed from software engineering, in service of humanities writing:
 
 ### Engineering helper scripts
 
-[`scripts/`](./scripts) provides five zero-dependency tools:
+[`scripts/`](./scripts) provides five tools requiring zsh and Python 3, with no third-party Python packages:
 
 | Script | Purpose |
 |--------|---------|
@@ -206,7 +206,7 @@ Borrowed from software engineering, in service of humanities writing:
 | `pending-checks.sh` | Aggregate all `[VERIFY]` / `[待核对]` / `❓ to discuss` / `[AI DRAFT]` markers |
 | `citation-consistency.py` | Citation-format consistency check (brackets / commas / connectors / EN/CN names / page numbers) |
 | `citation-format-convert.py` | Convert a BibTeX bibliography between Chicago (Author-Date) / MLA 9 / APA 7 / GB/T 7714 |
-| `citation-verify.py` | Verify in-prose citations against the Crossref API (anti-hallucination: FOUND / FUZZY_MATCH / NOT_FOUND) |
+| `citation-verify.py` | Look up Crossref/OpenAlex metadata candidates (FOUND / FUZZY_MATCH / NOT_FOUND / ERROR); no source-text or claim verification |
 
 ---
 
@@ -278,45 +278,26 @@ Tell the skill at onboarding:
 
 The skill will infer your closest L1 + any relevant L3 overlays, write it to `_writing-config/discipline.md`, and proceed. You can refine the declaration anytime.
 
-The full methodology rubric for each L1 / L3 entry lives in `SKILL.md` § *Humanities Discipline-Specific Dimensions* — this README table is the surface map; the skill carries the full rubric.
+The full methodology rubric for each L1 / L3 entry lives in `references/disciplines.md` — this README table is the surface map; the skill carries the full rubric.
 
 ---
 
 ## Showcase: Before / After
 
-A real example of the four-layer critique in action. Author's draft paragraph (English translation of a Chinese-language thesis chapter on Stiegler):
+An illustrative exercise, not a validated quotation from a named scholar. The supplied material is deliberately limited:
 
-> **Before.** Stiegler's pharmakon concept shows that technology is both poison and remedy. AI is therefore a pharmakon as well. We must be careful in our use of AI, lest we fall into its negative effects. As Stiegler said, technology is a double-edged sword.
+> **Draft.** All apprentices learn primarily from written rules. The two workshop interviews demonstrate that formal rules always take priority over experience.
+> **Reading note supplied by the author.** In these two interviews, apprentices describe consulting written rules for routine tasks and asking experienced workers about unusual cases.
 
-The skill's response, top-down, four layers:
+The skill should identify the mismatch before strengthening the prose:
 
-```
-🔴 Layer 1 · Foundation — Argument standing
+> **Finding · claim–evidence mismatch.** The interviews describe two forms of learning; they do not establish that rules always take priority. Two workshop interviews also do not justify “all apprentices.” This judgment uses the supplied note; the interview records have not been checked.
 
-  The paragraph claims pharmakon = "double-edged sword." Stiegler explicitly
-  rejects this equivalence (WMLWL, p. 12): pharmakon is curative AND
-  destructive AT THE SAME TIME, not alternately, and the destructive force
-  is proportional to the curative one. "Double-edged sword" implies a
-  user-choice framing; pharmakon implies a structural condition that
-  precedes user choice. This is not nuance — it is the whole point of
-  borrowing the concept from Derrida.
+If the author requests a revision, a bounded proposal is:
 
-  Verdict: Foundation broken. Do not proceed to lower layers until fixed.
+> **After.** In the two interviews summarized here, apprentices describe using written rules for routine tasks and turning to experienced workers in unusual situations. These accounts suggest that the roles of rules and experience vary with the task. [VERIFY: check the original interview records and add their actual locators.]
 
-🟡 Layer 2 · Structure — Argument unfolding (deferred until L1 fixed)
-
-🟢 Layer 3 · Paragraph (deferred)
-
-⚪ Layer 4 · Sentence (deferred)
-```
-
-After the author rewrites the foundation, the same paragraph might become:
-
-> **After.** In Stiegler's framework — extended from Derrida's reading of Plato's *Phaedrus* — *pharmakon* names a structural condition rather than a moral choice: a technology's curative force is **inseparable from and proportional to** its destructive force (Stiegler, *What Makes Life Worth Living*, 2013, p. 12). For LLMs, this means the question is not "are we careful enough in our use?" — that frame presupposes a user fully outside the pharmakon. The question is: *in what historical-organological configuration does the pharmakon's destructive face become structurally dominant?* I argue, following Stiegler's reading of digital tertiary retention in *Automatic Society* (2017), that …
-
-What changed: a clichéd "double-edged sword" framing replaced by Stiegler's actual conceptual move, a citation anchored at a verifiable page, and a forward-pointing thesis the next paragraph can develop. The skill did not write the rewrite — it identified that the foundation was wrong, named *why*, and refused to do sentence-level work until the foundation was repaired.
-
-> **This is what "thinking partner, not polishing tool" means in practice.**
+The revision narrows the claim to the material supplied and makes the remaining source check visible. It does not invent a quotation, page number, or external scholarly authority. The author still decides whether this interpretation fits the full evidence.
 
 ---
 
@@ -360,7 +341,7 @@ The Claude desktop app and claude.ai also support custom skills: package the ski
 
 ### Other agents (open SKILL.md format)
 
-This skill is written in the open [Agent Skills](https://agentskills.io) format: a folder containing `SKILL.md` plus plain-text `references/` and `scripts/`. Any agent that supports the format — or that can simply read `SKILL.md` (and, when routed there, `references/*.md`) into context — can use it: clone this repo into wherever your agent discovers skills. The `scripts/` toolchain assumes only a POSIX shell and Python 3, nothing Claude-specific.
+This skill is written in the open [Agent Skills](https://agentskills.io) format: a folder containing `SKILL.md` plus plain-text `references/` and `scripts/`. Any agent that supports the format — or that can simply read `SKILL.md` (and, when routed there, `references/*.md`) into context — can use it: clone this repo into wherever your agent discovers skills. The `scripts/` toolchain requires **zsh and Python 3**. Citation lookup additionally needs network access to Crossref and OpenAlex; the other checks run locally.
 
 ### Verify the installation
 
@@ -377,7 +358,7 @@ If neither works, check that the folder sits directly under `~/.claude/skills/` 
 
 **Chinese**: 论文 · 写作 · 润色 · 改论文 · 帮我看看这一章 · 我手写我口 · 这个论证有没有问题 · 我写不下去了 · 审稿人会怎么攻击
 
-Even casual mentions trigger: "take a look at this paragraph" · 帮我看看这段话
+When an academic draft is already in context, casual requests such as "take a look at this paragraph" · 帮我看看这段话 also apply.
 
 ---
 
@@ -387,14 +368,14 @@ Even casual mentions trigger: "take a look at this paragraph" · 帮我看看这
 
 Say to Claude: "I want to write a paper on X."
 
-The skill enters onboarding: confirms citation format, target reader, existing writing samples, and initializes the project folder structure.
+The skill starts from your idea and any materials already supplied, helping you form a research question or requested draft. It asks only for consequential missing information. Profiles and folders are created as needed when you choose ongoing file-based work.
 
 ### Scenario 2: revising an existing chapter
 
 ```
 "Help me read this chapter"      → Mode B (chapter review) → 4-tier feedback report
 "Help me revise this paragraph"  → Mode A (paragraph dialogue) → diagnose + suggest + reason
-"I'm stuck"                      → Mode E (bottleneck) → 5 unblocking strategies
+"I'm stuck"                      → Mode E (bottleneck) → one suitable next move
 ```
 
 ### Scenario 3: fighting AI cliché (two-version comparison)
@@ -415,7 +396,7 @@ Mode F · draft revision → compare AI-polished vs. original → keep improveme
 | **Paperpal** | Academic language polishing (STEM/biomed-leaning) | We're a writing architecture (12 modes, 4-layer critique, discipline routing), not a point polishing tool. |
 | **Yomu AI** | Sourcely literature engine + paragraph feedback | We assume the author manages literature (Zotero/Drive). Mode I helps organize what you've already read — never replaces the reading. |
 | **Thesify** | Paper Digest + Purpose-Check | Mode G is inspired by Purpose-Check. We use it within a broader four-layer critique workflow plus reviewer calibration. |
-| **HyperWrite Devil's Advocate** | Point-tool counter-argument generation | Mode D is a full devil's-advocate mode with 1–5 calibration, methodology-focus sub-mode, and a Concession Threshold (anti-sycophancy). |
+| **HyperWrite Devil's Advocate** | Point-tool counter-argument generation | Mode D is a full devil's-advocate mode with 1–5 calibration, methodology-focus sub-mode, and evidence-based concessions (anti-sycophancy). |
 | **Grammarly / DeepL Write** | Grammar / translation polishing | We never rewrite for "clarity" at the cost of voice. "My hand writes my voice" is a core principle, not optional. |
 | **Generic ChatGPT / Claude (no skill)** | General-purpose chat | We carry persistent style profile, reader profile, revision log, four-layer critique, discipline routing, AI-trace checklist, and citation toolchain across sessions. |
 
@@ -425,9 +406,10 @@ Mode F · draft revision → compare AI-polished vs. original → keep improveme
 
 ```
 humanities-writing-companion/
-├── SKILL.md                          ← Core skill file (EN, ~830 lines: principles, router, four-layer critique, mode stubs)
+├── SKILL.md                          ← Core skill file (EN: scope, evidence rules, task router, compact critique)
 ├── SKILL.zh.md                       ← Chinese mirror (中文版)
 ├── references/                       ← On-demand manuals (each with a `.zh.md` Chinese mirror)
+│   ├── critique-review.md            ← Detailed four-layer questions and review coverage
 │   ├── disciplines.md                ← Full discipline dimension tables (L1/L2/L3/adjacent + fallback)
 │   ├── modes-prewriting.md           ← Mode H / I / J full protocols
 │   ├── mode-c-drafting.md            ← Mode C four-stage drafting flow
@@ -442,13 +424,13 @@ humanities-writing-companion/
 │   ├── project-management.md         ← Project folder + version management
 │   ├── revision-workflow.md          ← Mode L revision-dossier workflow manual
 │   └── target-reader-profile-template.md  ← Target reader profile template
-├── scripts/                          ← Engineering toolchain (zero deps)
+├── scripts/                          ← Helper scripts (zsh + Python 3)
 │   ├── README.md                     ← Script usage
 │   ├── ai-trace-scan.sh              ← AI cliché scan (zsh)
 │   ├── pending-checks.sh             ← Pending marker aggregation (zsh)
 │   ├── citation-consistency.py       ← Citation format consistency (Python 3)
 │   ├── citation-format-convert.py    ← Chicago/MLA/APA/GB7714 converter (v4.0+)
-│   └── citation-verify.py            ← Crossref-based citation verification (v4.0+)
+│   └── citation-verify.py            ← Crossref/OpenAlex metadata candidate lookup
 ├── README.md                         ← This file
 ├── README.zh.md                      ← 中文 README
 ├── CHANGELOG.md                      ← Version history
@@ -456,7 +438,7 @@ humanities-writing-companion/
 └── CITATION.cff                      ← Academic citation metadata
 ```
 
-**Bilingual status**: the project is fully bilingual. SKILL.md, README, CONTRIBUTING, all four `references/` manuals, and `scripts/README` each exist as an English file plus a `.zh.md` Chinese mirror; script comments are bilingual as well. Both languages of trigger work either way (the description field in SKILL.md handles both).
+**Bilingual status**: the project is fully bilingual. SKILL.md, README, CONTRIBUTING, the `references/` manuals, and `scripts/README` each exist as an English file plus a `.zh.md` Chinese mirror; script comments are bilingual as well. Both languages of trigger work either way (the description field in SKILL.md handles both).
 
 ---
 
@@ -494,7 +476,7 @@ If your research uses this skill, please cite it in the methodology section.
   title        = {Humanities Writing Companion: An Agent Skill for Voice-Preserving Humanities Academic Writing},
   year         = {2026},
   publisher    = {Zenodo},
-  version      = {5.0.2},
+  version      = {5.1.0},
   doi          = {10.5281/zenodo.20280772},
   url          = {https://doi.org/10.5281/zenodo.20280772}
 }

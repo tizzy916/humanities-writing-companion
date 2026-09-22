@@ -9,21 +9,21 @@
 
 ## 1. Project Folder Structure
 
-Each paper or long-form piece is a self-contained project folder. **On first use, ask the user where the project root should live — do not assume a location.** Any stable directory works (e.g., `~/Documents/Papers/`, or a folder inside the user's note vault). All examples below use a generic root named `Papers/`:
+Each paper or long-form piece is a self-contained project folder. **Reuse a project path already supplied or established in the session. Ask for a location only when persistence is needed and no path is known; otherwise deliver inline.** Any stable directory works (e.g., `~/Documents/Papers/`, or a folder inside the user's note vault). All examples below use a generic root named `Papers/`:
 
 ```
-Papers/                                 ← project root (location chosen by the user — ask, don't assume)
-├── _writing-config/                    ← global writing configuration (shared across papers)
-│   ├── style-profile.md                ← the author's voice record (copy from references/style-profile-template.md; Chinese: 写作风格档案.md)
-│   ├── reader-profile.md               ← paired with the style profile — voice and audience are inseparable (copy from references/target-reader-profile-template.md; Chinese: 目标读者档案.md)
-│   ├── discipline.md                   ← L1/L2/L3 discipline declaration, written during onboarding (Chinese: 学科档案.md)
-│   ├── research-question.md            ← Mode H output (Chinese: 研究问题.md)
-│   ├── literature-map.md               ← Mode I output (Chinese: 文献地图.md)
-│   ├── outline.md                      ← Mode J output (Chinese: 论文大纲.md)
-│   ├── citation-style.md               ← the user's chosen citation-format quick reference (Chinese: 引用格式速查.md)
-│   └── academic-writing-checklist.md   ← pre-submission self-check (Chinese: 学术写作检查清单.md)
-│
+Papers/                                 ← optional parent directory (use the established location)
 └── [paper-name]/                       ← paper project folder
+    ├── _writing-config/                    ← per-paper configuration; never shared implicitly
+    │   ├── style-profile.md                ← the author's voice record (copy from references/style-profile-template.md; Chinese: 写作风格档案.md)
+    │   ├── reader-profile.md               ← paired with the style profile — voice and audience are inseparable (copy from references/target-reader-profile-template.md; Chinese: 目标读者档案.md)
+    │   ├── discipline.md                   ← L1/L2/L3 discipline declaration, written during onboarding (Chinese: 学科档案.md)
+    │   ├── research-question.md            ← Mode H output (Chinese: 研究问题.md)
+    │   ├── literature-map.md               ← Mode I output (Chinese: 文献地图.md)
+    │   ├── outline.md                      ← Mode J output (Chinese: 论文大纲.md)
+    │   ├── citation-style.md               ← the user's chosen citation-format quick reference (Chinese: 引用格式速查.md)
+    │   └── academic-writing-checklist.md   ← pre-submission self-check (Chinese: 学术写作检查清单.md)
+    │
     ├── [paper-name].md                 ← main draft (short papers: complete single file)
     ├── chapters/                       ← main draft (long-form/dissertations: chaptered multi-file; choose one of the two)
     ├── _meta/
@@ -42,7 +42,9 @@ Papers/                                 ← project root (location chosen by the
 
 **File-path naming note**: the tree above shows English defaults (matching the examples in SKILL.md); the Chinese equivalents in parentheses are equally valid. Use whichever matches the author's writing language — the structure is what matters, not the language of the labels.
 
-Not every `_writing-config/` file exists from day one: the two profiles are created at onboarding; `discipline.md` is written during the discipline declaration; `research-question.md` / `literature-map.md` / `outline.md` appear only when Modes H / I / J are actually run.
+All relative paths in this handbook are rooted in the individual paper folder. Keep reader, discipline, research question, literature map, outline, citation style, and checklist specific to that paper; a second paper must not overwrite them. Only author-level style preferences may be reused from a shared profile when the author explicitly chooses that arrangement. Record the shared source and keep paper-specific overrides local. For an existing shared configuration, preserve the original and copy only the entries verified to belong to the current paper; ask about ambiguous ownership rather than moving everything.
+
+Create configuration files only as needed: profiles during relevant setup, `discipline.md` when known, and `research-question.md` / `literature-map.md` / `outline.md` when Modes H / I / J actually produce them.
 
 ### Single file vs. chaptered multi-file
 
@@ -63,8 +65,8 @@ chapters/
 
 ### First-time initialization
 
-On a user's first session, create the project folder following the structure above. Confirm:
-- Where the project root should live (ask — see above)
+When a persistent writing project is requested, use the structure above. Reuse established answers and ask only about missing essentials:
+- The individual paper folder (use the supplied path; ask only if unknown)
 - The paper title (used to name the folder and the main draft)
 - Single file or chaptered multi-file (advise using the criteria above)
 - The citation format (create the matching quick-reference file)
@@ -104,11 +106,11 @@ Record in the changelog:
 
 **The `Source` field is required on every entry.** It records who initiated the change:
 
-- `AI-suggested`: the AI proposed the revision; the author reviewed and accepted it
+- `AI-suggested`: the AI proposed the revision; record author review or acceptance separately rather than assuming it from the edit
 - `author-initiated`: the author decided the change (the AI executed it, or the author edited directly)
 - `co-developed`: the direction emerged from dialogue and belongs to neither side alone
 
-Mode K (AI-use disclosure) audits this field to reconstruct the actual tier of AI involvement — without it, the disclosure statement degenerates into memory-based guessing. When unsure between `AI-suggested` and `co-developed`, ask: would this change exist without the AI's proposal? If not, it is at least `AI-suggested`.
+This field records who initiated a change, not who generated its wording. Also state the actual AI function in the summary (e.g., author-requested AI drafting, proofreading, or outline review), including whether generated material was retained. Mode K audits those facts and the available drafts; `author-initiated` does not mean no AI involvement. Record uncertain provenance as uncertain rather than inferring it from the source label.
 
 Example entry:
 
@@ -207,7 +209,7 @@ After every substantive writing discussion, append to `_meta/interaction-log.md`
 
 ### Session-state checkpoint
 
-Before the end of any conversation with substantive progress (or when the AI senses the context may be nearing the compaction threshold), write a structured checkpoint into the interaction log. For the format, see the "Anti-Drift Protocol" section of SKILL.md.
+For an ongoing file-based project, save a concise checkpoint after meaningful edits or decisions: completed work, current version/location, decisions, unverified issues, and next action. See "Persistent projects and resumption" in SKILL.md; a one-off chat can keep this information inline.
 
 The checkpoint exists so that, on cross-session resumption, the AI can quickly rebuild the full working context rather than relying on memory that may have been compacted away.
 
@@ -226,5 +228,5 @@ If the user's vault has an Inbox system, append a brief record to the Inbox afte
 Once the paper is finished, export according to the user's choice:
 - **.docx**: invoke the docx skill
 - **.pdf**: invoke the pdf skill
-- **.tex**: generate a LaTeX source file (confirm the template with the user)
+- **.tex**: generate a LaTeX source file using the requested or existing template; ask only if an unresolved template choice materially affects the output
 - Run the academic-writing checklist before exporting

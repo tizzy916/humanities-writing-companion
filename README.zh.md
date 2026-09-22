@@ -57,7 +57,7 @@
 | **投稿前** | Mode G · 盲读核对 · Mode K · AI 使用披露 |
 | **评审后** | Mode L · 修订工作流(答辩/外审意见整合,修订档案制) |
 
-外加**引用工具链**(`scripts/`):格式一致性扫描、格式转换(Chicago / MLA / APA / GB7714)、Crossref 文献验证。在具备 agent 编排能力的环境(如 Claude Code)中,Mode B/D 审读可以 fan-out 给并行审稿 agent,待核断言可经 deep-research 类工具按证据等级查证。
+外加**引用工具链**(`scripts/`):格式一致性扫描、格式转换(Chicago / MLA / APA / GB7714)、Crossref/OpenAlex 元数据候选检索（不核验原文或论断支持）。在具备 agent 编排能力的环境(如 Claude Code)中,Mode B/D 审读可以分派给并行审稿 agent；待核断言可查阅来源，分别记录出处、支持关系与局限。
 
 ---
 
@@ -118,7 +118,7 @@
 第四层 · 语句批判 — "这句话说对了吗？说好了吗？"
 ```
 
-**严格自上而下规则**：上层未解决时不在下层花大力气。
+**按范围确定优先级**：全文审阅先处理重要论证问题；局部修改不依赖这些问题的解决时，完成用户所要求的修改。
 
 ### 魔鬼代言人 + 抗谄媚机制
 
@@ -128,7 +128,7 @@
 - 审稿人 C · 方法论质疑型
 - 读者 D · 善意困惑型（**独到设计**：能让善意读者困惑的地方就是论证薄弱处）
 
-**抗谄媚硬机制**：作者推回质疑时，必须满足 5 项实质条件中的 ≥2 项才让步——防止 AI 在情绪压力下提前软化。
+**依据证据纠正**：不因压力无依据让步；但一条决定性的原文或有效推理足以推翻异议，就应撤回。审稿强度不允许无视纠正。
 
 ### 文风深层学习与保持（"我手写我口"）
 
@@ -202,7 +202,7 @@
 | `pending-checks.sh` | 汇总所有 `[VERIFY]` / `[待核对]` / `❓ 待讨论` / `[AI 草稿]` 标记 |
 | `citation-consistency.py` | 引用格式一致性扫描（括号 / 逗号 / 连接词 / 中英姓名 / 页码） |
 | `citation-format-convert.py` | BibTeX 文献表在 Chicago（著者-出版年）/ MLA 9 / APA 7 / GB/T 7714 之间转换 |
-| `citation-verify.py` | 对照 Crossref API 核查文中引用（抗幻觉：FOUND / FUZZY_MATCH / NOT_FOUND） |
+| `citation-verify.py` | 检索 Crossref/OpenAlex 元数据候选（FOUND / FUZZY_MATCH / NOT_FOUND / ERROR）；不核验原文或论断支持 |
 
 ---
 
@@ -274,44 +274,26 @@
 
 skill 会推断最接近的 L1 + 相关 L3 叠加,写入 `_writing-config/学科档案.md`,然后继续。你可以随时细化声明。
 
-每个 L1 / L3 entry 的完整方法论 rubric 在 `SKILL.md § 人文学科写作的特殊维度` 中——本 README 表是表面地图,skill 内部承载完整 rubric。
+每个 L1 / L3 entry 的完整方法论 rubric 在 `references/disciplines.zh.md` 中——本 README 表是表面地图,skill 内部承载完整 rubric。
 
 ---
 
-## Showcase · 真实 Before / After 案例
+## Showcase · 修改前后示例
 
-四层批评的真实应用。作者的学位论文初稿(讨论 Stiegler 的 pharmakon 与 AI):
+这是教学练习，不是某位学者的已核验引语。刻意只提供有限材料：
 
-> **Before.** Stiegler 的 pharmakon 概念表明,技术既是毒也是药。所以 AI 也是 pharmakon。我们要谨慎使用 AI,避免落入它的负面效应。正如 Stiegler 所说,技术是一把双刃剑。
+> **原稿。** 所有学徒主要依靠书面规程学习。两次工坊访谈证明，正式规则总是优先于经验。
+> **作者提供的阅读笔记。** 两次访谈中，学徒都说常规操作时查阅书面规程，遇到例外情况时请教有经验的工人。
 
-skill 的回应,自上而下,四层:
+skill 应在强化文字前指出材料与主张的距离：
 
-```
-🔴 第 1 层 · 基础 — 论证成立性
+> **发现 · 主张与证据不匹配。** 访谈笔记描述了两种学习方式，没有证明规则总是优先。两次工坊访谈也不能支撑“所有学徒”。该判断依据提供的笔记，尚未核对访谈原始记录。
 
-  这一段把 pharmakon 等同于"双刃剑"。Stiegler 明确反对这种等同
-  (WMLWL, p. 12):pharmakon 的治愈力与破坏力是**同时**而非交替的,
-  且破坏力**与治愈力成正比**。"双刃剑"暗示的是"用户的选择"——你
-  小心点就好;pharmakon 暗示的是"先于用户选择的结构性条件"。这不
-  是细微差别,这是为什么 Stiegler 从 Derrida 那里借这个概念的整个
-  原因。
+如果作者要求修改，可提出范围有限的版本：
 
-  判断:基础已破。在修复 L1 前,不下到下面三层。
+> **修改后。** 这里概述的两次访谈中，学徒描述了常规操作时查阅书面规程、遇到例外时请教有经验工人的做法。这些叙述提示，规则与经验的作用可能随任务而变化。[待核对：查访谈原始记录并补充真实定位。]
 
-🟡 第 2 层 · 结构 — 论证展开(L1 未修复前不做)
-
-🟢 第 3 层 · 段落(暂缓)
-
-⚪ 第 4 层 · 句子(暂缓)
-```
-
-作者重写基础后,这段可能变成:
-
-> **After.** 在 Stiegler 的框架中(承自 Derrida 对柏拉图《斐德罗》的解读),*pharmakon* 命名的是一种**结构性条件**而非道德选择:技术的治愈力与破坏力**不可分离且强度成正比**(Stiegler, *What Makes Life Worth Living*, 2013, p. 12)。对 LLM 而言,这意味着真正的问题不是"我们是否足够小心地使用它?"——这种提问预设了一个**完全在 pharmakon 之外**的用户。真正的问题是:*在什么样的历史-器官学配置下,pharmakon 的破坏性面向被结构性地强化?* 我将在下文论证:沿着 Stiegler 在 *Automatic Society*(2017)对数字第三持存的诊断……
-
-变化:陈词滥调的"双刃剑"被 Stiegler 真正的概念动作替换;引用锚定在可核查的页码;结论指向下一段可以展开的具体论题。**skill 没有替作者写这个重写**——它指出基础错了、说清楚错在哪里、然后**拒绝在基础修复之前做任何句子级工作**。
-
-> **这就是"思维伙伴,而非润色工具"的实际含义。**
+修改让论断范围与已有材料相称，并保留来源核验缺口。不编造引语、页码或外部学术权威；这项解释是否符合全部证据，仍由作者判断。
 
 ---
 
@@ -355,7 +337,7 @@ Claude 桌面版与 claude.ai 也支持自定义 skill：把 skill 文件夹（�
 
 ### 其他 agent（开放 SKILL.md 格式）
 
-本 skill 采用开放的 [Agent Skills](https://agentskills.io) 格式：一个包含 `SKILL.md` 以及纯文本 `references/`、`scripts/` 的文件夹。任何支持该格式的 agent——或者只要能把 `SKILL.md`（及按需路由到的 `references/*.md`）读入上下文——都可以使用：把本仓库 clone 到你的 agent 发现 skills 的目录即可。`scripts/` 工具链只依赖 POSIX shell 和 Python 3，没有任何 Claude 专属依赖。
+本 skill 采用开放的 [Agent Skills](https://agentskills.io) 格式：一个包含 `SKILL.md` 以及纯文本 `references/`、`scripts/` 的文件夹。任何支持该格式的 agent——或者只要能把 `SKILL.md`（及按需路由到的 `references/*.md`）读入上下文——都可以使用：把本仓库 clone 到你的 agent 发现 skills 的目录即可。`scripts/` 工具链需要 **zsh 和 Python 3**。引用查询还需要联网访问 Crossref 和 OpenAlex；其余检查可在本地运行。
 
 ### 验证安装
 
@@ -372,7 +354,7 @@ Claude 桌面版与 claude.ai 也支持自定义 skill：把 skill 文件夹（�
 
 **英文**："paper," "essay," "chapter," "dissertation," "argument," "thesis," "revise," "voice," "review my section," "stuck on writing," "devil's advocate"
 
-即使随口说也触发："帮我看看这段话" · "take a look at this paragraph"
+已有学术稿件语境时，随口说“帮我看看这段话”或“take a look at this paragraph”也适用。
 
 ---
 
@@ -382,14 +364,14 @@ Claude 桌面版与 claude.ai 也支持自定义 skill：把 skill 文件夹（�
 
 对 Claude 说："我想写一篇关于 X 的论文。"
 
-skill 进入 onboarding：确认引用格式、目标读者、已有写作样本，并初始化项目文件夹结构。
+skill 从你的想法和已有材料出发，帮助形成研究问题或交付所需草稿，只询问会影响结果的缺失信息。选择持续文件协作后，再按需建立档案与目录。
 
 ### 场景 2：修改已有章节
 
 ```
 "帮我看看这一章"     → 模式 B（章节级审读）→ 四级反馈报告
 "帮我改这段"         → 模式 A（段落级对话）→ 诊断 + 建议 + 理由
-"我写不下去了"       → 模式 E（写作瓶颈）→ 五种解冻策略
+"我写不下去了"       → 模式 E（写作瓶颈）→ 一个合适的下一步
 ```
 
 ### 场景 3：对抗 AI 腔调（双版本对照）
@@ -410,7 +392,7 @@ skill 进入 onboarding：确认引用格式、目标读者、已有写作样本
 | **Paperpal** | 学术语言润色(偏理科/生医) | 我们是写作架构(12 个模式 + 四层批判 + 学科路由),不是单点润色工具 |
 | **Yomu AI** | Sourcely 文献引擎 + 段落反馈 | 文献由作者自管(Zotero / Drive)。Mode I 帮你整理读过的,从不替你读你没读的 |
 | **Thesify** | Paper Digest + Purpose-Check | Mode G 借鉴了 Purpose-Check,但放在四层批判 + reviewer calibration 的更大工作流里 |
-| **HyperWrite Devil's Advocate** | 单点反方论证生成 | Mode D 是完整模式:1-5 级 calibration + 方法论专项 + Concession Threshold(抗谄媚) |
+| **HyperWrite Devil's Advocate** | 单点反方论证生成 | Mode D 是完整模式:1-5 级 calibration + 方法论专项 + 基于证据的让步机制(抗谄媚) |
 | **Grammarly / DeepL Write** | 语法 / 翻译润色 | 我们绝不为了"清晰"牺牲声音。「我手写我口」是核心原则不是可选项 |
 | **通用 ChatGPT / Claude(无 skill)** | 通用对话 | 我们跨对话持续维护:写作风格档案、读者档案、修改日志、四层批判、学科路由、AI 痕迹清单、引用工具链 |
 
@@ -420,9 +402,10 @@ skill 进入 onboarding：确认引用格式、目标读者、已有写作样本
 
 ```
 humanities-writing-companion/
-├── SKILL.md                          ← 核心 skill 文件(英文,约 830 行:原则、路由表、四层批判、模式存根)
+├── SKILL.md                          ← 核心 skill 文件(英文,精简入口:原则、路由表、四层批判、模式存根)
 ├── SKILL.zh.md                       ← 中文镜像版
 ├── references/                       ← 按需加载手册(每个都有 `.zh.md` 中文镜像)
+│   ├── critique-review.md            ← 详细四层问题与审阅覆盖检查
 │   ├── disciplines.md                ← 完整学科维度表(L1/L2/L3/邻近 + 兜底协议)
 │   ├── modes-prewriting.md           ← 模式 H / I / J 完整协议
 │   ├── mode-c-drafting.md            ← 模式 C 四阶段起草流程
@@ -443,7 +426,7 @@ humanities-writing-companion/
 │   ├── pending-checks.sh             ← 待办标记汇总(zsh)
 │   ├── citation-consistency.py       ← 引用格式一致性(Python 3)
 │   ├── citation-format-convert.py    ← Chicago/MLA/APA/GB7714 转换(v4.0+)
-│   └── citation-verify.py            ← Crossref 引用核查(v4.0+)
+│   └── citation-verify.py            ← Crossref/OpenAlex 元数据候选检索
 ├── README.md                         ← 英文 README
 ├── README.zh.md                      ← 本文件
 ├── CHANGELOG.md                      ← 版本历史
@@ -451,7 +434,7 @@ humanities-writing-companion/
 └── CITATION.cff                      ← 学术引用元数据
 ```
 
-**双语状态**：项目已完全双语化。SKILL.md、README、CONTRIBUTING、`references/` 的全部四份手册以及 `scripts/README` 均为英文文件 + `.zh.md` 中文镜像成对存在；脚本注释同样双语。两种语言的触发词都能激活 skill（SKILL.md 的 description 字段同时处理两种语言）。
+**双语状态**：项目已完全双语化。SKILL.md、README、CONTRIBUTING、`references/` 的全部手册以及 `scripts/README` 均为英文文件 + `.zh.md` 中文镜像成对存在；脚本注释同样双语。两种语言的触发词都能激活 skill（SKILL.md 的 description 字段同时处理两种语言）。
 
 ---
 
@@ -489,7 +472,7 @@ humanities-writing-companion/
   title        = {Humanities Writing Companion: An Agent Skill for Voice-Preserving Humanities Academic Writing},
   year         = {2026},
   publisher    = {Zenodo},
-  version      = {5.0.2},
+  version      = {5.1.0},
   doi          = {10.5281/zenodo.20280772},
   url          = {https://doi.org/10.5281/zenodo.20280772}
 }

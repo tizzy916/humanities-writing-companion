@@ -6,7 +6,7 @@
 
 **What's unique about this mode**: AI temporarily **turns off scholarly judgment** and only mechanically checks "did the author do what they said they would do?" Borrows from Thesify's Purpose-Check design — avoid AI's subjective processing, let the author themselves see whether the paper delivered on its promises.
 
-**"Blind" means exactly two switches, both off**: (1) scholarly judgment off — no quality evaluation; (2) author-context off — do not read `_writing-config/` files. It does *not* mean anonymity (that's blind *review*, a different thing). Note that promise-extraction and matching still involve interpretation — this mode is *more* mechanical than Mode B, not infallible; flag borderline calls as borderline.
+**Context isolation must be real**: not reading `_writing-config/` does not erase author context already present in the conversation. When available, use a fresh reviewer agent with no inherited history, giving it only the manuscript and these checking instructions; do not supply the author's intended argument, earlier discussion, or profiles. State what it received. If an isolated run is unavailable, deliver a **promise-delivery check in the current context** and disclose that author-intent isolation was not achieved. Neither form is anonymous peer review. Promise extraction and matching still require interpretation; flag borderline calls.
 
 **When to engage**:
 
@@ -37,7 +37,8 @@
 
 3. **Output format**:
    ```
-   === Blind Reading · [chapter] ===
+   === [Isolated reading / Current-context promise-delivery check] · [chapter] ===
+   Context: [fresh agent; manuscript only / existing conversation retained]
 
    ## ✅ Promises delivered
    - Promise: "this chapter will explore the tension between X and Y" (§1 ¶2)
@@ -60,7 +61,7 @@
    - Does not evaluate "is this promise scholarly worthwhile" — that's Layer 1 (foundation) work
    - Does not suggest rewriting un-delivered promises — only flags the "promise-delivery gap"
    - Does not write the missing responses — leaves to author whether to add delivery or retract promise
-   - Does not read `_writing-config/` files — this mode deliberately steps outside the author's "internal view"
+   - Does not load `_writing-config/` files for this check; claims of author-context isolation require a genuinely fresh run as specified above
 
 **Why this mode is valuable**: writing over long periods causes "promise drift" — the promises in the intro get replaced by discoveries in the argumentative process, but the author doesn't feel it. Blind reading is a mirror, placing the "original promise" and "actual delivery" side by side.
 
@@ -70,64 +71,59 @@
 
 ---
 
-### Mode K: AI-use disclosure (humanities-journal-specific)
+### Mode K: AI-use disclosure (target-policy check)
 
-Generates the AI-use disclosure statement that humanities journals increasingly require for submission. **Humanities journals have different (typically stricter) AI policies than STEM journals** — many ban AI co-authorship, restrict AI to specific functions, and require explicit tier disclosure.
+Draft a factual record of AI use and adapt it to the **current policy of the target journal or institution**. Do not generalize about how permissive humanities or STEM journals are. This skill's categories are an internal audit aid, not a publishing standard or evidence that a use is permitted.
 
 **When to engage**:
-- Before journal submission
-- Before dissertation deposit
-- When the author asks "what do I write about AI use?"
+- Before journal submission or dissertation deposit
+- When the author asks what to disclose about AI use
 
 **Workflow**:
 
-1. **Audit AI involvement** by reading:
-   - `_meta/interaction-log.md` (the full record of AI-assisted moves)
-   - `_meta/revision-log.md` (which revisions were AI-suggested vs. author-initiated)
-   - Any reflexive-writing notes the author kept
-   - The skill's mode history (which modes were actually used, esp. Mode C drafting, Mode F revision)
+1. **Audit actual uses**, including earlier drafts and other tools:
+   - Read `_meta/interaction-log.md`, `_meta/revision-log.md`, available drafts, and any reflexive notes.
+   - For each use, record tool/version if known, date or period, function, affected material, and how the author reviewed or reworked it. Write `unknown` for missing details.
+   - Record both historical use and what survives in the current manuscript. Who requested an edit does not establish whether AI generated its wording.
 
-2. **Categorize by tier** (humanities-specific 4-tier scheme):
-   - **Tier 0 · No AI involvement**: drafted, revised, and finalized without AI. (Rare in 2026.)
-   - **Tier 1 · AI for proofreading / translation / formatting only**: grammar correction, translation between languages, citation format conversion. No argumentative or conceptual involvement. **Most journals accept this without question.**
-   - **Tier 2 · AI as thinking partner / devil's advocate**: AI used for Socratic dialogue, devil's advocacy, brainstorming, blind reading. AI did NOT generate prose that appears in the submission. **Most humanities journals accept with disclosure.**
-   - **Tier 3 · AI-assisted prose**: some prose in the submission was AI-drafted then author-revised, OR AI-suggested phrasing was incorporated. **Several humanities journals restrict or forbid this; disclosure must be specific.**
-   - **Tier 4 · AI-generated prose substantial**: large sections drafted by AI, then revised. **Many top humanities journals forbid this entirely.** Mode K will warn the author.
+2. **Optional internal categories (Tier 0–4; five labels)**:
+   - **Tier 0 · No AI involvement**: the available record supports no AI use in preparing the manuscript. Missing logs do not establish Tier 0.
+   - **Tier 1 · Proofreading / translation / formatting**: record the exact function and whether generated wording or translation was adopted; a translation can contain substantial AI-generated language.
+   - **Tier 2 · Thinking partner / review**: Socratic dialogue, brainstorming, outlining, adversarial review, or promise-delivery checking. Record conceptual or structural contributions even without prose drafting.
+   - **Tier 3 · Prose drafting or suggested wording**: AI drafted passages or proposed wording during preparation; record what was incorporated, discarded, or subsequently rewritten.
+   - **Tier 4 · Extensive prose drafting**: AI drafted large parts of the manuscript. Describe the extent only at the granularity the records support; there is no universal percentage threshold.
+   These labels summarize functions and extent; they are not a universal risk ranking. Keep all applicable uses visible. The target policy may classify translation, rewriting, or conceptual work differently.
 
-3. **Check journal policy — never from memory.** Ask the author to paste the journal's AI policy text, or fetch it in web-capable environments. If neither is possible, say plainly that the policy could not be verified and default to the most conservative reading. Do not assert what a named journal's policy says from memory — a wrong policy claim here misleads a submission decision. Flag if the author's actual tier exceeds what the verified policy permits.
+3. **Verify the target's current policy — never from memory.** Read the official policy in a web-capable environment, or use policy text supplied by the author and label its provenance. Record the URL/title, retrieval date or supplied version, applicable clauses, and any uncertainty about currency. Compare **actual uses** to the policy's own terms, including required wording and placement. If the policy cannot be verified or leaves a use unclear, deliver a factual disclosure draft marked `policy compatibility unverified`; do not invent a conservative rule or claim compliance. Flag only conflicts supported by the verified policy.
 
-4. **Generate disclosure statement** (multiple template options):
+4. **Draft from the audit, using the target's required form where available**:
 
-   **Template A · short (Tier 1–2, suitable for footnote or acknowledgments)**:
-   > In preparing this manuscript, I used [tool + version, e.g., Claude (Anthropic), versions used March–June 2026] for [proofreading / Socratic devil's-advocate dialogue / format consistency checks]. The AI did not generate prose that appears in this submission. The author is responsible for all arguments, evidence, and final wording.
+   **Short template**:
+   > In preparing this manuscript, I used [tool/version, if known] during [period] for [specific functions and affected material]. [State accurately whether wording, translations, ideas, or structure were adopted and how they were reviewed.] The author is responsible for the final manuscript.
 
-   **Template B · standard (Tier 2–3, disclosure paragraph)**:
-   > **AI use disclosure.** During the writing of this paper, I used [AI tool + version, dates of use] in the following capacities: (1) [specific use 1, e.g., Socratic dialogue on the research question]; (2) [specific use 2, e.g., devil's-advocate stress-testing in Section 3]; (3) [specific use 3, e.g., AI-trace cleanup of an earlier AI-polished version]. [If Tier 3:] In Section [X], [quantity — only at the granularity the logs support; without records, honest qualitative wording such as "portions of Section 2"] of the prose was initially AI-drafted and subsequently revised by the author. All claims, citations, and arguments are the author's responsibility.
+   **Detailed template**:
+   > **AI use disclosure.** During preparation, I used [tool/version, period] for [specific use 1], [specific use 2], and [specific use 3]. In [sections], [records-supported extent] was [AI-drafted / translated / revised with AI]. The author [specific review and reworking]. [If relevant: earlier AI-generated drafts were discarded and the passages were redrafted; describe this without deleting the earlier use.] The author is responsible for all claims, citations, and final wording.
 
-   **Template C · detailed (Tier 3–4, paragraph + appendix)**:
-   > [Template B paragraph as above, ending with:] A per-section breakdown of AI involvement is provided in Appendix [X].
-   >
-   > **Appendix [X] · AI involvement by section**
-   >
-   > | Section | AI involvement | Tier | How the author reworked it |
-   > |---------|----------------|------|----------------------------|
-   > | §1 Introduction | none / devil's-advocate only | 0–2 | — |
-   > | §2 … | first draft AI-generated from author's oral outline | 3 | restructured, re-argued, rewritten against style profile |
-   > | … | … | … | … |
+   An optional appendix may use:
+   > | Section/material | Actual AI function and period | What was retained or discarded | Author review/reworking | Evidence or uncertainty |
+   > |---|---|---|---|---|
+   > | §2 | First draft from the author's outline | [actual disposition] | [actual review] | [log/draft or reconstructed account] |
 
-5. **Placement**: humanities journals usually take Tier 1–2 disclosures as an acknowledgments note or first-page footnote; Tier 3+ goes where the verified policy says — when in doubt, acknowledgments plus a sentence in the cover letter. Dissertations: follow the institution's template; default is a dedicated declaration page.
+   Do not include a blanket “AI generated no prose” statement unless the record supports it; proofreading and translation can also introduce wording. Do not call a style scan proof of authorship or provenance.
 
-6. **Save to** `_meta/AI-use-statement.md` (Chinese: `AI 使用披露.md`).
+5. **Placement**: follow the verified journal or institutional instructions. If placement is unknown, keep the statement as a separate draft with placement pending; do not present acknowledgments, a footnote, a cover letter, or a declaration page as a universal default.
 
-**Author's prompt to verify**:
-- "Did I use AI for any other function you forgot to mention?"
-- "Did I use AI on materials I haven't told you about (e.g., earlier drafts before this skill was used)?"
-- "Am I comfortable with the level of disclosure this generates? If not, I should reduce AI use, not reduce disclosure."
+6. **Save to** `_meta/AI-use-statement.md` (Chinese: `AI 使用披露.md`), or deliver inline when file output is unavailable or not requested. Mark author review and policy-verification status separately.
+
+**Author verification prompts** (ask only about gaps not already answered):
+- Were there other tools, functions, or earlier drafts missing from the audit?
+- Which generated wording, translation, ideas, or structural suggestions were adopted?
+- Are any dates, versions, or quantities uncertain?
 
 **Hard constraints**:
-- Do NOT under-disclose. If the author wants to soften the statement, ask: "what specifically do you want to remove? Why?" Often the answer reveals an ethical problem.
-- Do NOT over-claim AI sophistication ("the AI made critical contributions"): journals will read this as the AI being a co-author, which is forbidden. Disclosure is about transparency, not flattery.
-- **Tiers merge upward**: the manuscript's overall tier is the highest tier reached anywhere in it. Structural contributions without prose (Mode J outlining, Mode H question work) disclose as thinking-partner use (Tier 2).
-- **"I rewrote it heavily" does not demote Tier 3 to Tier 2.** The test: was the surviving prose regenerated from the author's own restatement *without the AI draft in view*? If the AI draft served as the working base, it stays Tier 3. Genuine demotion follows actual re-drafting (Mode F's no-original branch + ai-trace-scan + re-audit), never re-wording of the statement.
-- **Missing or partial logs** (pre-skill drafts, other tools): reconstruct by structured interview — walk the manuscript section by section and ask what role AI played in each; label the result as a reconstruction.
-- Always remind: **the author is responsible for everything in the submission**, regardless of AI involvement tier.
+- Do not omit actual use to make a manuscript appear compatible with a policy. Correct factual overstatement as readily as understatement; wanting clearer wording alone is not evidence of misconduct.
+- Describe specific AI functions without assigning AI authorship or inferring a journal's rule about it. Use the verified target policy for submission requirements.
+- If a single internal summary label is useful, retain the highest historical Tier alongside the detailed use record. It is not a journal eligibility verdict; non-prose structural contributions remain visible as Tier 2.
+- **Rewriting, removing an AI draft from view, and passing `ai-trace-scan` do not erase historical AI use or justify downgrading the disclosure record.** Record the rewrite as a later event. Whether earlier use must appear in the submitted statement depends on the verified target policy; never infer an exemption from stylistic similarity or a scanner result.
+- **Missing or partial logs**: reconstruct the history with the author, label it as a reconstruction, and retain uncertainties. Do not fabricate percentages or turn absence of records into absence of AI use.
+- The author remains responsible for the submitted manuscript; local checks do not establish journal acceptance or policy approval.

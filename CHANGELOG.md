@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.1.0] — 2026-09-22
+
+### Changed
+
+- Reduced both skill entrypoints to a task router, scope/authorization rules, evidence boundaries, and compact four-layer critique; moved detailed critique prompts into a bilingual reference pair.
+- Replaced mandatory per-paragraph reconfirmation and minimum-reading-count gates with task-scoped execution; retained optional Socratic coaching and authorial control.
+- Changed reviewer concessions to follow decisive evidence rather than a fixed number of conditions. Promise–delivery checks now distinguish isolated reviewers from an existing conversation.
+- Made AI-use categories internal audit labels, tied submission advice to the actual target policy, and removed scanner-based disclosure downgrades.
+- Isolated configuration per paper. Replaced the unverified scholarly showcase with an explicitly illustrative, source-bounded exercise. Corrected shell requirements to zsh.
+
+### Fixed
+
+- Pending-marker scans now recognize English and Chinese forms consistently.
+- Near surname matches remain FUZZY_MATCH; malformed API responses remain ERROR instead of NOT_FOUND. Clarified that metadata candidates and zero parsed citations do not verify a manuscript.
+- Singular/plural page notation and page ranges no longer produce a false mixed-style warning.
+
+### Validation
+
+- Added 15 offline regression tests and CI checks for both entrypoint descriptions, resource links, and discovered bilingual reference pairs. Static checks do not establish semantic equivalence or writing quality.
+- Local validation: 59 top-level offline checks passed (including a suite of 15 new regression tests); one live-network test skipped. Six bounded usage scenarios exercised. These checks do not establish full writing-quality or cross-platform performance.
+
+---
+
 ## [5.0.2] — 2026-07-13
 
 **Citation-metadata fix only.**
